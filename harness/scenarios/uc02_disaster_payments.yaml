@@ -1,0 +1,77 @@
+id: uc02
+title: Disaster-recovery contractor payments
+book_ref: "Field guide, Chapter 4, Use Case 2"
+summary: >
+  After a cyclone, invoice volumes and amounts jump. Against the normal reference profile, the
+  legitimate surge looks like drift and would block every payment (a false alarm). Fixes: a
+  storm-mode reference profile switched on only by a statement signed with a separate oracle key;
+  a per-contractor 24-hour payment ceiling; and duplicate-cluster detection, which keeps cloned
+  invoices out of the token's bindings.
+seed: 12
+
+contracts:
+  - product: contractor_invoices
+    owner: field-operations
+    key_column: invoice_id
+    freshness: {sla_seconds: 1800}
+    lineage: {upstreams: [outage_zones, contractor_register]}
+    duplicate_keys: [contractor_id, amount, job_code]
+    columns:
+      invoice_id: {type: string, criticality: 3, pattern: '^CI-\d{6}$'}
+      contractor_id: {type: string, criticality: 3, pattern: '^C-\d{2}$'}
+      account_id: {type: string, criticality: 3, pattern: '^ACC-\d{4}$'}
+      amount: {type: number, criticality: 3, min: 0, max: 50000}
+      crew_size: {type: number, criticality: 2, min: 1, max: 40}
+      job_code: {type: string, criticality: 2, pattern: '^J\d{3}$'}
+      status: {type: string, criticality: 2, allowed: [open]}
+    modes:
+      stress: {description: "Declared natural-disaster operations"}
+    tools:
+      write:
+        approve_payment:
+          args: {invoice_id: '^CI-\d{6}$', contractor_id: '^C-\d{2}$', account_id: '^ACC-\d{4}$', amount: {type: number, min: 0.01}}
+          limits: {amount_max: 50000}
+          bind: {keys: [invoice_id, contractor_id, account_id], max: {amount: amount}}
+    temporal:
+      - {name: one_payment_per_invoice, tool: approve_payment, type: once_per, by: [invoice_id], window_seconds: 2592000}
+      - {name: contractor_daily_ceiling, tool: approve_payment, type: sum_within, field: amount, by: [contractor_id], window_seconds: 86400, max: 60000}
+
+data:
+  contractor_invoices:
+    rows: 300
+    seed: 2
+    columns:
+      invoice_id: {gen: seq, prefix: "CI-", digits: 6}
+      contractor_id: {gen: choice, values: [C-01, C-02, C-03, C-04, C-05]}
+      account_id: {gen: map, from: contractor_id, values: {C-01: ACC-2001, C-02: ACC-2002, C-03: ACC-2003, C-04: ACC-2004, C-05: ACC-2005}}
+      amount: {gen: normal, mean: 4000, sd: 1200, clip: [200, 20000], round: 2}
+      crew_size: {gen: int, mean: 4, sd: 1, clip: [1, 10]}
+      job_code: {gen: choice, values: [J101, J102, J103, J104, J105, J106, J107, J108, J109, J110]}
+      status: {gen: const, value: open}
+    profiles:
+      stress:
+        overrides:
+          amount: {gen: normal, mean: 12000, sd: 3500, clip: [500, 45000], round: 2}
+          crew_size: {gen: int, mean: 9, sd: 2, clip: [2, 30]}
+lineage: {outage_zones: 1.0, contractor_register: 1.0}
+
+steps:
+  - {name: "Normal operations: Tier 1", do: evaluate, product: contractor_invoices, expect: {tier: 1}}
+  - {name: "Cyclone surge: legitimate invoices with storm-sized jobs arrive", do: fault, fault: {type: regenerate, product: contractor_invoices, profile: stress, rows: 300, seed: 21, start: 1000}}
+  - {name: "Against the normal profile the surge looks like drift (false alarm)", do: evaluate, product: contractor_invoices, expect: {tier: 3, vector_below: {drift: 0.5}}}
+  - {name: "Storm mode signed with the wrong key is rejected", do: mode_switch, product: contractor_invoices, mode: stress, signer: token, expect: {result: TOKEN_UNKNOWN_KEY}}
+  - {name: "Undeclared mode is rejected", do: mode_switch, product: contractor_invoices, mode: wartime, signer: oracle, expect: {result: MODE_NOT_DECLARED}}
+  - {name: "Officer signs storm mode with the oracle key (12 h)", do: mode_switch, product: contractor_invoices, mode: stress, signer: oracle, ttl: 43200, reason: "Cyclone declared", expect: {result: ok}}
+  - {name: "Same data now compared with the storm profile: Tier 1", do: evaluate, product: contractor_invoices, expect: {tier: 1}}
+  - {name: "Token for storm payments", do: issue, as: t1, agent: storm-pay-agent, products: [contractor_invoices], expect: {tier: 1, modes: {approve_payment: direct}}}
+  - {name: "Pay one contractor until the 24 h ceiling stops it", do: call_until_denied, token: t1, tool: approve_payment, binding_where: {contractor_id: C-01}, expect: {code: TEMPORAL_VIOLATION, min_allowed: 2}}
+  - {name: "A few cloned invoices appear (5 identical rows, new ids)", do: fault, fault: {type: duplicate_cluster, product: contractor_invoices, count: 5, id_column: invoice_id, id_prefix: "CI-", id_start: 900000}}
+  - {name: "Small clone cluster lowers integrity but the batch stays payable", do: evaluate, product: contractor_invoices, expect: {tier_in: [1, 2], vector_below: {poison: 0.9}}}
+  - {name: "New token: clones are left out of the payable rows", do: issue, as: t2, agent: storm-pay-agent, products: [contractor_invoices]}
+  - {name: "A cloned invoice is refused", do: call, token: t2, tool: approve_payment, args: {invoice_id: CI-900002, contractor_id: C-02, account_id: ACC-2002, amount: 100.0}, expect: {decision: denied, code: BINDING_VIOLATION}}
+  - {name: "A large clone cluster appears (30 more rows)", do: fault, fault: {type: duplicate_cluster, product: contractor_invoices, template_row: 1, count: 30, id_column: invoice_id, id_prefix: "CI-", id_start: 910000}}
+  - {name: "Circuit breaker: Tier 3", do: evaluate, product: contractor_invoices, expect: {tier: 3, vector_below: {poison: 0.6}}}
+  - {name: "Storm mode expires after 12 h", do: advance, seconds: 43300}
+  - {name: "Fresh load of storm data", do: fault, fault: {type: regenerate, product: contractor_invoices, profile: stress, rows: 300, seed: 22, start: 2000}}
+  - {name: "Back on the normal profile: blocked again until re-signed", do: evaluate, product: contractor_invoices, expect: {tier: 3}}
+  - {name: "Audit chain verifies", do: audit_verify, expect: {valid: true}}

@@ -1,0 +1,83 @@
+{
+  "checks": [
+    {
+      "id": "E1",
+      "expected": "every chain folder valid; pre-v3 objects listed as legacy",
+      "actual": "5/5 chains valid; 1 legacy object(s)",
+      "status": "PASS",
+      "evidence": {
+        "chains": {
+          "cene-control/20261107T124455Z-47dc103b": {
+            "valid": true,
+            "msg": "ok (2 events)",
+            "events": 2,
+            "checkpoints": 0
+          },
+          "cene-control/20261107T210803Z-694fdd8d": {
+            "valid": true,
+            "msg": "ok (4 events)",
+            "events": 4,
+            "checkpoints": 0
+          },
+          "cene-gateway/20261107T124518Z-424109f4": {
+            "valid": true,
+            "msg": "ok (3 events)",
+            "events": 3,
+            "checkpoints": 0
+          },
+          "cene-gateway/20261107T210816Z-0ded70d3": {
+            "valid": true,
+            "msg": "ok (13 events)",
+            "events": 13,
+            "checkpoints": 0
+          },
+          "cene-gateway/20261107T211125Z-f1e9d86a": {
+            "valid": true,
+            "msg": "ok (18 events)",
+            "events": 18,
+            "checkpoints": 0
+          }
+        },
+        "legacy": [
+          "audit/000000000001-event.json"
+        ]
+      }
+    },
+    {
+      "id": "E2",
+      "expected": "valid: false naming seq 10",
+      "actual": "valid: False (hash mismatch at seq 10)",
+      "status": "PASS",
+      "evidence": {
+        "chain": "cene-gateway/20261107T211125Z-f1e9d86a",
+        "field": "agent"
+      }
+    },
+    {
+      "id": "E3",
+      "expected": "gateway SA cannot overwrite an object (403, create-only)",
+      "actual": "inferred from IAM: gateway bucket roles ['roles/storage.objectCreator']; objectCreator has delete=False; retention {'effectiveTime': '2026-11-07T12:21:54.003000+00:00', 'retentionPeriod': '2592000'}",
+      "status": "PASS",
+      "evidence": {
+        "method": "inferred (impersonation of the gateway SA not available)",
+        "retention": {
+          "effectiveTime": "2026-11-07T12:21:54.003000+00:00",
+          "retentionPeriod": "2592000"
+        }
+      }
+    },
+    {
+      "id": "E4",
+      "expected": "event counts in the B/C window = {'decision': 14, 'token_issued': 2, 'escrow_submitted': 2, 'escrow_approved': 2}",
+      "actual": "{'token_issued': 2, 'decision': 14, 'escrow_submitted': 2, 'escrow_approved': 2}",
+      "status": "PASS",
+      "evidence": {
+        "window": [
+          1794085854.0,
+          1794085925.0
+        ],
+        "diff": {}
+      }
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+{
+ "revision": {
+  "tag": "agentdojo-policy-v1",
+  "policy_tag": "agentdojo-policy-v1",
+  "policy_commit": "7f04c1b510298bf0beafece8e3b59bd6e41d902d",
+  "run_tag": "agentdojo-run-r3",
+  "run_commit": "274ec696c106f1a23636134a7acad8171e0b05e0",
+  "commit": "274ec696c106f1a23636134a7acad8171e0b05e0",
+  "policy_files_unchanged": true,
+  "packaged": "2026-11-08T07:32:59Z"
+ },
+ "session": "RUN",
+ "week": 1,
+ "quota_left_hours_at_start": 14.9,
+ "gpus": "Tesla T4, 15360 MiB, 580.178.04\nTesla T4, 15360 MiB, 580.178.04",
+ "agentdojo_wheel_sha256": "364bea4219716b716bf639f504d195943f7f6a5535d312ca41d7098704a2affd",
+ "resumed": [
+  "check.json",
+  "environment_CHECK.json",
+  "select_native_tools.json",
+  "tool_mode.json"
+ ],
+ "serve_attempts": [
+  {
+   "id": "vllm-flex-12b",
+   "result": "not tried in r3 (see run_config serving.r3_start_option)"
+  },
+  {
+   "id": "hf-12b",
+   "path": "/kaggle/input/models/google/gemma-4/transformers/gemma-4-12b-it/2",
+   "transformers": "5.22.2",
+   "torch": "2.11.0+cu130",
+   "args": [
+    "/usr/bin/python3",
+    "-m",
+    "cene_agentdojo.serve_hf",
+    "--model",
+    "/kaggle/input/models/google/gemma-4/transformers/gemma-4-12b-it/2",
+    "--name",
+    "gemma-4-12b-it",
+    "--port",
+    "8000",
+    "--dtype",
+    "float16",
+    "--attn-implementation",
+    "sdpa",
+    "--max-memory-gib",
+    "14",
+    "--max-new-tokens",
+    "1024",
+    "--info-out",
+    "/kaggle/working/serve_info.json"
+   ],
+   "result": "ok",
+   "detail": "OK",
+   "seconds": 104
+  }
+ ],
+ "served": {
+  "id": "hf-12b",
+  "stack": "transformers",
+  "folder": "gemma-4-12b-it",
+  "gpus": "0,1",
+  "dtype": "float16",
+  "attn_implementation": "sdpa",
+  "text_only": true,
+  "max_memory_gib_per_gpu": 14,
+  "timeout_minutes": 30,
+  "path": "/kaggle/input/models/google/gemma-4/transformers/gemma-4-12b-it/2",
+  "files": [
+   [
+    "README.md",
+    27867
+   ],
+   [
+    "chat_template.jinja",
+    17466
+   ],
+   [
+    "config.json",
+    4423
+   ],
+   [
+    "generation_config.json",
+    260
+   ],
+   [
+    "model.safetensors",
+    23919549408
+   ],
+   [
+    "processor_config.json",
+    1382
+   ],
+   [
+    "tokenizer.json",
+    32169626
+   ],
+   [
+    "tokenizer_config.json",
+    2102
+   ]
+  ],
+  "server_info": {
+   "stack": "transformers",
+   "transformers": "5.22.2",
+   "torch": "2.11.0+cu130",
+   "cuda_devices": [
+    "Tesla T4",
+    "Tesla T4"
+   ],
+   "dtype": "float16",
+   "attn_implementation": "sdpa",
+   "max_memory_gib": 14.0,
+   "max_new_tokens": 1024,
+   "path": "/kaggle/input/models/google/gemma-4/transformers/gemma-4-12b-it/2",
+   "name": "gemma-4-12b-it",
+   "chat_template_sha256": "36e3a42e5cf14cd0020e72d92e1fdd9970f59b82170e421f0cbe1bb42bead3f0",
+   "chat_template_mentions_enable_thinking": true,
+   "thinking": "off: enable_thinking=False passed to the template; the thinking channel is also stripped from every reply",
+   "response_template_source": "transformers.cli.serving.utils",
+   "text_only_missing_keys": [],
+   "text_only_result": "ok",
+   "model_class": "Gemma4UnifiedForCausalLM",
+   "text_only": true,
+   "device_map": [
+    "0",
+    "1"
+   ],
+   "load_seconds": 50.0
+  },
+  "transformers": "5.22.2",
+  "torch": "2.11.0+cu130",
+  "args": [
+   "/usr/bin/python3",
+   "-m",
+   "cene_agentdojo.serve_hf",
+   "--model",
+   "/kaggle/input/models/google/gemma-4/transformers/gemma-4-12b-it/2",
+   "--name",
+   "gemma-4-12b-it",
+   "--port",
+   "8000",
+   "--dtype",
+   "float16",
+   "--attn-implementation",
+   "sdpa",
+   "--max-memory-gib",
+   "14",
+   "--max-new-tokens",
+   "1024",
+   "--info-out",
+   "/kaggle/working/serve_info.json"
+  ]
+ },
+ "decoding": {
+  "temperature": 0.0,
+  "top_p": 0.9,
+  "per_request_seed": "random.randint(0, 1000000) after random.seed(seed_base + episode_index)",
+  "seed_base": 1000,
+  "episode_index": "100 * user_task_number + injection_task_number; 99 for no-attack episodes",
+  "concurrency": 1
+ },
+ "versions": {
+  "vllm": null,
+  "transformers": "5.22.2",
+  "torch": "2.11.0+cu130",
+  "agentdojo": null,
+  "openai": "2.54.0"
+ },
+ "setup_seconds": 129,
+ "finished": 1794145261.1865332,
+ "tool_mode": {
+  "provider": "native"
+ }
+}

@@ -1,0 +1,71 @@
+{
+ "revision": {
+  "tag": "agentdojo-policy-v1",
+  "commit": "7f04c1b510298bf0beafece8e3b59bd6e41d902d",
+  "packaged": "2026-11-08T04:13:32Z"
+ },
+ "vllm_version": "0.33.0",
+ "gpus": "Tesla T4, 15360 MiB, 580.178.04\nTesla T4, 15360 MiB, 580.178.04",
+ "agentdojo_wheel_sha256": "364bea4219716b716bf639f504d195943f7f6a5535d312ca41d7098704a2affd",
+ "serve_attempts": [
+  {
+   "candidate": "gemma-4-12b-it",
+   "path": "/kaggle/input/models/google/gemma-4/transformers/gemma-4-12b-it/2",
+   "args": [
+    "vllm",
+    "serve",
+    "/kaggle/input/models/google/gemma-4/transformers/gemma-4-12b-it/2",
+    "--port",
+    "8000",
+    "--served-model-name",
+    "gemma-4-12b-it",
+    "--tensor-parallel-size",
+    "2",
+    "--dtype",
+    "float16",
+    "--max-model-len",
+    "16384",
+    "--gpu-memory-utilization",
+    "0.92",
+    "--seed",
+    "0",
+    "--max-num-seqs",
+    "1"
+   ],
+   "result": "failed"
+  },
+  {
+   "candidate": "gemma-4-12b-it-4bit",
+   "path": "/kaggle/input/models/google/gemma-4/transformers/gemma-4-12b-it/2",
+   "args": [
+    "vllm",
+    "serve",
+    "/kaggle/input/models/google/gemma-4/transformers/gemma-4-12b-it/2",
+    "--port",
+    "8000",
+    "--served-model-name",
+    "gemma-4-12b-it-4bit",
+    "--tensor-parallel-size",
+    "1",
+    "--dtype",
+    "float16",
+    "--max-model-len",
+    "16384",
+    "--gpu-memory-utilization",
+    "0.92",
+    "--seed",
+    "0",
+    "--max-num-seqs",
+    "1"
+   ],
+   "result": "failed"
+  },
+  {
+   "candidate": "smaller-gemma-it",
+   "result": "not attached"
+  }
+ ],
+ "served": null,
+ "session": "S1",
+ "started": 1794112557.5394444
+}

@@ -1,0 +1,64 @@
+id: uc07
+title: SME credit decisioning and automated lending
+book_ref: "Field guide, Chapter 4, Use Case 7"
+summary: >
+  A lending agent books small-business loans. Failures replicated: an economic regime shift that
+  moves cash-flow indicators away from what the credit policy was built on, and credit-bureau data
+  that is too old for some applicants while every other indicator looks excellent. Fixes: drift
+  detection that sends loans to the credit committee (escrow) or blocks them, and a zero-tolerance
+  rule on bureau-data age that a high overall score cannot compensate for.
+seed: 17
+
+contracts:
+  - product: credit_applications
+    owner: lending-data
+    key_column: app_id
+    freshness: {sla_seconds: 86400}
+    lineage: {upstreams: [bureau_feed, open_banking_feed]}
+    columns:
+      app_id: {type: string, criticality: 3, pattern: '^LA-\d{5}$'}
+      requested_amount: {type: number, criticality: 3, min: 10000, max: 500000}
+      dscr: {type: number, criticality: 3, min: 0, max: 10}
+      bureau_score: {type: number, criticality: 3, min: 300, max: 900}
+      bureau_age_days: {type: number, criticality: 3, min: 0, max: 365}
+      cash_trend: {type: number, criticality: 2, min: -1, max: 1}
+      revenue: {type: number, criticality: 2, min: 0}
+    zero_tolerance:
+      - {column: bureau_age_days, rule: max, value: 30}
+    tools:
+      write:
+        book_loan:
+          args: {app_id: '^LA-\d{5}$', amount: {type: number, min: 1000}}
+          limits: {amount_max: 500000}
+          bind: {keys: [app_id], max: {amount: requested_amount}}
+    temporal:
+      - {name: one_loan_per_application, tool: book_loan, type: once_per, by: [app_id], window_seconds: 31536000}
+
+data:
+  credit_applications:
+    rows: 400
+    seed: 7
+    load_age_seconds: 3600
+    columns:
+      app_id: {gen: seq, prefix: "LA-", digits: 5}
+      requested_amount: {gen: lognormal, mean: 11.5, sigma: 0.6, clip: [20000, 480000], round: 0}
+      dscr: {gen: normal, mean: 1.7, sd: 0.3, clip: [0.5, 5], round: 2}
+      bureau_score: {gen: normal, mean: 730, sd: 40, clip: [450, 880], round: 0}
+      bureau_age_days: {gen: int, mean: 8, sd: 4, clip: [0, 25]}
+      cash_trend: {gen: normal, mean: 0.03, sd: 0.04, clip: [-0.5, 0.5], round: 3}
+      revenue: {gen: lognormal, mean: 13.5, sigma: 0.7, round: 0}
+lineage: {bureau_feed: 1.0, open_banking_feed: 1.0}
+
+steps:
+  - {name: "Normal economy: Tier 1", do: evaluate, product: credit_applications, expect: {tier: 1}}
+  - {name: "Token for the lending task", do: issue, as: t1, agent: lending-agent, products: [credit_applications], expect: {tier: 1}}
+  - {name: "Book a loan within the requested amount", do: call, token: t1, tool: book_loan, from_binding: {binding: 0}, expect: {decision: allowed}}
+  - {name: "Book the same application twice", do: call, token: t1, tool: book_loan, from_binding: {binding: 0}, expect: {decision: denied, code: TEMPORAL_VIOLATION}}
+  - {name: "Regime shift: cash-flow trend falls sharply across applicants", do: fault, fault: {type: shift, product: credit_applications, column: cash_trend, add: -0.06, fraction: 1.0}}
+  - {name: "Drift detected: loans leave Tier 1", do: evaluate, product: credit_applications, expect: {tier_in: [2, 3], vector_below: {drift: 0.6}}}
+  - {name: "Lending token now holds no direct booking rights", do: issue, as: t2, agent: lending-agent, products: [credit_applications]}
+  - {name: "A booking is held for the credit committee or refused", do: call, token: t2, tool: book_loan, args: {app_id: LA-00020, amount: 50000}, expect: {decision_in: [escrow, denied]}}
+  - {name: "Economy data restored", do: fault, fault: {type: regenerate, product: credit_applications, rows: 400, seed: 71, age_seconds: 3600}}
+  - {name: "Back to Tier 1", do: evaluate, product: credit_applications, expect: {tier: 1}}
+  - {name: "Bureau data for one applicant is 45 days old", do: fault, fault: {type: set_value, product: credit_applications, where: {app_id: LA-00030}, set: {bureau_age_days: 45}}}
+  - {name: "Zero-tolerance rule: Tier 3 although every other measure is excellent", do: evaluate, product: credit_applications, expect: {tier: 3, reason_contains: "zero_tolerance:bureau_age_days", linear_cqi_above: 0.95}}

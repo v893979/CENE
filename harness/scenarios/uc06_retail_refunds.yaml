@@ -1,0 +1,53 @@
+id: uc06
+title: Omnichannel retail returns and refunds
+book_ref: "Field guide, Chapter 4, Use Case 6"
+summary: >
+  A customer-service agent issues refunds under $500. Failures replicated: refunds for orders the
+  carrier never scanned back at the depot, and many small refunds to one delivery address across
+  separate chats. Fixes: a binding that only covers orders with a depot scan, and a 30-day refund
+  count limit per delivery address that holds across sessions and tokens.
+seed: 16
+
+contracts:
+  - product: orders
+    owner: retail-data
+    key_column: order_id
+    freshness: {sla_seconds: 3600}
+    lineage: {upstreams: [carrier_scans]}
+    columns:
+      order_id: {type: string, criticality: 3, pattern: '^O-\d{6}$'}
+      delivery_address_id: {type: string, criticality: 3, pattern: '^A-\d{3}$'}
+      order_value: {type: number, criticality: 3, min: 1, max: 500}
+      depot_scan_ts: {type: string, criticality: 1}
+    tools:
+      write:
+        issue_refund:
+          args: {order_id: '^O-\d{6}$', delivery_address_id: '^A-\d{3}$', amount: {type: number, min: 0.01}}
+          limits: {amount_max: 500}
+          bind: {keys: [order_id, delivery_address_id], max: {amount: order_value}, require_not_null: [depot_scan_ts]}
+    temporal:
+      - {name: one_refund_per_order, tool: issue_refund, type: once_per, by: [order_id], window_seconds: 7776000}
+      - {name: refunds_per_address_30d, tool: issue_refund, type: count_within, by: [delivery_address_id], window_seconds: 2592000, max: 3}
+
+data:
+  orders:
+    rows: 400
+    seed: 6
+    columns:
+      order_id: {gen: seq, prefix: "O-", digits: 6}
+      delivery_address_id: {gen: choice, values: [A-001, A-002, A-003, A-004, A-005, A-006, A-007, A-008, A-009, A-010, A-011, A-012, A-013, A-014, A-015, A-016, A-017, A-018, A-019, A-020, A-021, A-022, A-023, A-024, A-025, A-026, A-027, A-028, A-029, A-030, A-031, A-032, A-033, A-034, A-035, A-036, A-037, A-038, A-039, A-040]}
+      order_value: {gen: lognormal, mean: 4.4, sigma: 0.6, clip: [5, 480], round: 2}
+      depot_scan_ts: {gen: maybe, p_null: 0.15, of: {gen: const, value: "2026-11-01T09:00:00Z"}}
+lineage: {carrier_scans: 1.0}
+
+steps:
+  - {name: "Orders data: Tier 1", do: evaluate, product: orders, expect: {tier: 1}}
+  - {name: "Token for the returns chat", do: issue, as: t1, agent: returns-agent, products: [orders], expect: {tier: 1}}
+  - {name: "Refund a scanned-back order", do: call, token: t1, tool: issue_refund, from_binding: {binding: 0}, expect: {decision: allowed}}
+  - {name: "Refund an order with no depot scan", do: call, token: t1, tool: issue_refund, from_row: {product: orders, where_null: [depot_scan_ts], fields: {order_id: order_id, delivery_address_id: delivery_address_id, amount: order_value}}, expect: {decision: denied, code: BINDING_VIOLATION}}
+  - {name: "Refund more than the order value", do: call, token: t1, tool: issue_refund, from_binding: {binding: 1, amount_fraction: 2.0}, expect: {decision: denied}}
+  - {name: "Repeated refunds to one address are stopped after 3 in 30 days", do: call_until_denied, token: t1, tool: issue_refund, binding_where: {delivery_address_id: A-007}, expect: {code: TEMPORAL_VIOLATION, min_allowed: 3}}
+  - {name: "A new chat session gets a fresh token", do: issue, as: t2, agent: returns-agent, products: [orders]}
+  - {name: "The limit still applies in the new session", do: call_until_denied, token: t2, tool: issue_refund, binding_where: {delivery_address_id: A-007}, expect: {code: TEMPORAL_VIOLATION, min_allowed: 0}}
+  - {name: "Baseline: without controls, 8 refunds to one address all execute", do: direct, tool: issue_refund, args: {order_id: O-000001, delivery_address_id: A-007, amount: 450}, repeat: 8}
+  - {name: "Audit chain verifies", do: audit_verify, expect: {valid: true}}

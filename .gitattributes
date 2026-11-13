@@ -1,0 +1,2 @@
+# Evidence is filed byte-exact: no line-ending conversion, so evidence/MANIFEST.sha256 stays valid on any checkout
+evidence/** -text

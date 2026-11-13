@@ -1,0 +1,599 @@
+{
+ "method": "For each configuration, every episode present in an earlier run is compared (sha256 of the canonical JSON of the episode object) with the same episode key in each later run. Run records (runs[]) are listed per run.",
+ "configs": {
+  "M1": {
+   "episodes_per_run": {
+    "RUN-1": 16,
+    "RUN-2": 16,
+    "RUN-3": 16
+   },
+   "checks": [
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-2",
+     "episodes_compared": 16,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-3",
+     "episodes_compared": 16,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-2",
+     "later": "RUN-3",
+     "episodes_compared": 16,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    }
+   ],
+   "run_records": {
+    "RUN-1": [
+     {
+      "started": "2026-11-12T07:38:37.375137+00:00",
+      "finished": "2026-11-12T07:46:43.394557+00:00",
+      "stopped": null,
+      "new_episodes": 16,
+      "resumed": false
+     }
+    ],
+    "RUN-2": [
+     {
+      "started": "2026-11-12T07:38:37.375137+00:00",
+      "finished": "2026-11-12T07:46:43.394557+00:00",
+      "stopped": null,
+      "new_episodes": 16,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:32:51.189343+00:00",
+      "finished": "2026-11-12T20:32:51.814907+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ],
+    "RUN-3": [
+     {
+      "started": "2026-11-12T07:38:37.375137+00:00",
+      "finished": "2026-11-12T07:46:43.394557+00:00",
+      "stopped": null,
+      "new_episodes": 16,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:32:51.189343+00:00",
+      "finished": "2026-11-12T20:32:51.814907+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     },
+     {
+      "started": "2026-11-12T22:15:52.528076+00:00",
+      "finished": "2026-11-12T22:15:53.127435+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ]
+   }
+  },
+  "M2": {
+   "episodes_per_run": {
+    "RUN-1": 144,
+    "RUN-2": 144,
+    "RUN-3": 144
+   },
+   "checks": [
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-2",
+     "episodes_compared": 144,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-3",
+     "episodes_compared": 144,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-2",
+     "later": "RUN-3",
+     "episodes_compared": 144,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    }
+   ],
+   "run_records": {
+    "RUN-1": [
+     {
+      "started": "2026-11-12T07:46:48.502731+00:00",
+      "finished": "2026-11-12T09:39:39.826256+00:00",
+      "stopped": null,
+      "new_episodes": 144,
+      "resumed": false
+     }
+    ],
+    "RUN-2": [
+     {
+      "started": "2026-11-12T07:46:48.502731+00:00",
+      "finished": "2026-11-12T09:39:39.826256+00:00",
+      "stopped": null,
+      "new_episodes": 144,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:32:57.130326+00:00",
+      "finished": "2026-11-12T20:32:57.752097+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ],
+    "RUN-3": [
+     {
+      "started": "2026-11-12T07:46:48.502731+00:00",
+      "finished": "2026-11-12T09:39:39.826256+00:00",
+      "stopped": null,
+      "new_episodes": 144,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:32:57.130326+00:00",
+      "finished": "2026-11-12T20:32:57.752097+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     },
+     {
+      "started": "2026-11-12T22:15:58.345246+00:00",
+      "finished": "2026-11-12T22:15:58.966615+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ]
+   }
+  },
+  "M3": {
+   "episodes_per_run": {
+    "RUN-1": 16,
+    "RUN-2": 16,
+    "RUN-3": 16
+   },
+   "checks": [
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-2",
+     "episodes_compared": 16,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-3",
+     "episodes_compared": 16,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-2",
+     "later": "RUN-3",
+     "episodes_compared": 16,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    }
+   ],
+   "run_records": {
+    "RUN-1": [
+     {
+      "started": "2026-11-12T09:39:45.096129+00:00",
+      "finished": "2026-11-12T09:47:53.009140+00:00",
+      "stopped": null,
+      "new_episodes": 16,
+      "resumed": false
+     }
+    ],
+    "RUN-2": [
+     {
+      "started": "2026-11-12T09:39:45.096129+00:00",
+      "finished": "2026-11-12T09:47:53.009140+00:00",
+      "stopped": null,
+      "new_episodes": 16,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:33:03.040375+00:00",
+      "finished": "2026-11-12T20:33:03.656830+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ],
+    "RUN-3": [
+     {
+      "started": "2026-11-12T09:39:45.096129+00:00",
+      "finished": "2026-11-12T09:47:53.009140+00:00",
+      "stopped": null,
+      "new_episodes": 16,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:33:03.040375+00:00",
+      "finished": "2026-11-12T20:33:03.656830+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     },
+     {
+      "started": "2026-11-12T22:16:04.218644+00:00",
+      "finished": "2026-11-12T22:16:04.816896+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ]
+   }
+  },
+  "M4": {
+   "episodes_per_run": {
+    "RUN-1": 144,
+    "RUN-2": 144,
+    "RUN-3": 144
+   },
+   "checks": [
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-2",
+     "episodes_compared": 144,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-3",
+     "episodes_compared": 144,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-2",
+     "later": "RUN-3",
+     "episodes_compared": 144,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    }
+   ],
+   "run_records": {
+    "RUN-1": [
+     {
+      "started": "2026-11-12T09:47:58.148289+00:00",
+      "finished": "2026-11-12T11:33:22.469714+00:00",
+      "stopped": null,
+      "new_episodes": 144,
+      "resumed": false
+     }
+    ],
+    "RUN-2": [
+     {
+      "started": "2026-11-12T09:47:58.148289+00:00",
+      "finished": "2026-11-12T11:33:22.469714+00:00",
+      "stopped": null,
+      "new_episodes": 144,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:33:08.966540+00:00",
+      "finished": "2026-11-12T20:33:09.616443+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ],
+    "RUN-3": [
+     {
+      "started": "2026-11-12T09:47:58.148289+00:00",
+      "finished": "2026-11-12T11:33:22.469714+00:00",
+      "stopped": null,
+      "new_episodes": 144,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:33:08.966540+00:00",
+      "finished": "2026-11-12T20:33:09.616443+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     },
+     {
+      "started": "2026-11-12T22:16:10.074617+00:00",
+      "finished": "2026-11-12T22:16:10.688244+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ]
+   }
+  },
+  "M5": {
+   "episodes_per_run": {
+    "RUN-1": null,
+    "RUN-2": 16,
+    "RUN-3": 16
+   },
+   "checks": [
+    {
+     "earlier": "RUN-2",
+     "later": "RUN-3",
+     "episodes_compared": 16,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    }
+   ],
+   "run_records": {
+    "RUN-1": null,
+    "RUN-2": [
+     {
+      "started": "2026-11-12T20:33:45.919726+00:00",
+      "finished": "2026-11-12T20:41:35.083593+00:00",
+      "stopped": null,
+      "new_episodes": 16,
+      "resumed": false
+     }
+    ],
+    "RUN-3": [
+     {
+      "started": "2026-11-12T20:33:45.919726+00:00",
+      "finished": "2026-11-12T20:41:35.083593+00:00",
+      "stopped": null,
+      "new_episodes": 16,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T22:16:47.155632+00:00",
+      "finished": "2026-11-12T22:16:47.759939+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ]
+   }
+  },
+  "M6": {
+   "episodes_per_run": {
+    "RUN-1": null,
+    "RUN-2": 75,
+    "RUN-3": 144
+   },
+   "checks": [
+    {
+     "earlier": "RUN-2",
+     "later": "RUN-3",
+     "episodes_compared": 75,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    }
+   ],
+   "run_records": {
+    "RUN-1": null,
+    "RUN-2": [
+     {
+      "started": "2026-11-12T20:41:40.439111+00:00",
+      "finished": "2026-11-12T21:36:32.676114+00:00",
+      "stopped": "deadline",
+      "new_episodes": 75,
+      "resumed": false
+     }
+    ],
+    "RUN-3": [
+     {
+      "started": "2026-11-12T20:41:40.439111+00:00",
+      "finished": "2026-11-12T21:36:32.676114+00:00",
+      "stopped": "deadline",
+      "new_episodes": 75,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T22:16:53.020823+00:00",
+      "finished": "2026-11-12T23:18:35.452894+00:00",
+      "stopped": null,
+      "new_episodes": 69,
+      "resumed": true
+     }
+    ]
+   }
+  },
+  "M7": {
+   "episodes_per_run": {
+    "RUN-1": 16,
+    "RUN-2": 16,
+    "RUN-3": 16
+   },
+   "checks": [
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-2",
+     "episodes_compared": 16,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-3",
+     "episodes_compared": 16,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-2",
+     "later": "RUN-3",
+     "episodes_compared": 16,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    }
+   ],
+   "run_records": {
+    "RUN-1": [
+     {
+      "started": "2026-11-12T11:33:27.685084+00:00",
+      "finished": "2026-11-12T11:37:47.079142+00:00",
+      "stopped": null,
+      "new_episodes": 16,
+      "resumed": false
+     }
+    ],
+    "RUN-2": [
+     {
+      "started": "2026-11-12T11:33:27.685084+00:00",
+      "finished": "2026-11-12T11:37:47.079142+00:00",
+      "stopped": null,
+      "new_episodes": 16,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:33:14.877596+00:00",
+      "finished": "2026-11-12T20:33:24.214931+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ],
+    "RUN-3": [
+     {
+      "started": "2026-11-12T11:33:27.685084+00:00",
+      "finished": "2026-11-12T11:37:47.079142+00:00",
+      "stopped": null,
+      "new_episodes": 16,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:33:14.877596+00:00",
+      "finished": "2026-11-12T20:33:24.214931+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     },
+     {
+      "started": "2026-11-12T22:16:15.959332+00:00",
+      "finished": "2026-11-12T22:16:25.286190+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ]
+   }
+  },
+  "M8": {
+   "episodes_per_run": {
+    "RUN-1": 144,
+    "RUN-2": 144,
+    "RUN-3": 144
+   },
+   "checks": [
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-2",
+     "episodes_compared": 144,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-1",
+     "later": "RUN-3",
+     "episodes_compared": 144,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    },
+    {
+     "earlier": "RUN-2",
+     "later": "RUN-3",
+     "episodes_compared": 144,
+     "missing_in_later": [],
+     "changed_in_later": [],
+     "identical": true
+    }
+   ],
+   "run_records": {
+    "RUN-1": [
+     {
+      "started": "2026-11-12T11:37:53.343571+00:00",
+      "finished": "2026-11-12T12:29:45.156998+00:00",
+      "stopped": null,
+      "new_episodes": 144,
+      "resumed": false
+     }
+    ],
+    "RUN-2": [
+     {
+      "started": "2026-11-12T11:37:53.343571+00:00",
+      "finished": "2026-11-12T12:29:45.156998+00:00",
+      "stopped": null,
+      "new_episodes": 144,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:33:30.342752+00:00",
+      "finished": "2026-11-12T20:33:39.705059+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ],
+    "RUN-3": [
+     {
+      "started": "2026-11-12T11:37:53.343571+00:00",
+      "finished": "2026-11-12T12:29:45.156998+00:00",
+      "stopped": null,
+      "new_episodes": 144,
+      "resumed": false
+     },
+     {
+      "started": "2026-11-12T20:33:30.342752+00:00",
+      "finished": "2026-11-12T20:33:39.705059+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     },
+     {
+      "started": "2026-11-12T22:16:31.522622+00:00",
+      "finished": "2026-11-12T22:16:40.814771+00:00",
+      "stopped": null,
+      "new_episodes": 0,
+      "resumed": true
+     }
+    ]
+   }
+  }
+ },
+ "all_completed_episodes_identical_in_later_runs": true,
+ "RUN-3_status": {
+  "_all_done": true,
+  "_week_done": true,
+  "_session_hours": 1.1
+ }
+}

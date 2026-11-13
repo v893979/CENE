@@ -1,0 +1,169 @@
+{
+  "control": "https://<cene-control-url>",
+  "gateway": "https://<cene-gateway-url>",
+  "user": "<tester-google-account>",
+  "summary": {
+    "C": {
+      "PASS": 10,
+      "FAIL": 1,
+      "SKIP": 0
+    }
+  },
+  "checks": [
+    {
+      "id": "C1",
+      "expected": "tier 2; fresh < 0.9; reason mentions freshness",
+      "actual": "tier 2; fresh 0.7058; reasons ['fresh=0.71<0.9']",
+      "status": "PASS",
+      "evidence": {
+        "vectors": {
+          "fresh": 0.7058,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "score": 0.7381
+      },
+      "utc": "2026-11-07T21:54:20Z"
+    },
+    {
+      "id": "C2",
+      "expected": "tier 2; approve_payment escrow",
+      "actual": "tier 2; approve_payment escrow",
+      "status": "PASS",
+      "evidence": {
+        "token": "eyJhbGciOiJFUzI1NiIs...",
+        "http": 200,
+        "trace": "8b0790ddeb63a2223b7f98477edb8278",
+        "ms": 4699.1
+      },
+      "utc": "2026-11-07T21:54:25Z"
+    },
+    {
+      "id": "C3",
+      "expected": "200 decision escrow, escrow id",
+      "actual": "200 escrow id=ed17bb74586b",
+      "status": "PASS",
+      "evidence": {
+        "invoice": "INV-000358",
+        "http": 200,
+        "decision": "escrow",
+        "trace": "ef73382475c562a6bc79304b79b32f1b",
+        "ms": 2603.9
+      },
+      "utc": "2026-11-07T21:54:27Z"
+    },
+    {
+      "id": "C4",
+      "expected": "item listed as pending",
+      "actual": "200; listed=True",
+      "status": "PASS",
+      "evidence": {
+        "http": 200,
+        "trace": "a627f9c11c948ac5bc79304b79b3243d",
+        "ms": 25.2
+      },
+      "utc": "2026-11-07T21:54:28Z"
+    },
+    {
+      "id": "C5",
+      "expected": "approver 1 -> status pending",
+      "actual": "200 {'status': 'pending', 'approvals': 1, 'required': 2}",
+      "status": "PASS",
+      "evidence": {
+        "http": 200,
+        "trace": "c1a0a061ae517484bc79304b79b3216b",
+        "ms": 74.8
+      },
+      "utc": "2026-11-07T21:54:28Z"
+    },
+    {
+      "id": "C6",
+      "expected": "409 DUPLICATE_APPROVER",
+      "actual": "409 DUPLICATE_APPROVER",
+      "status": "PASS",
+      "evidence": {
+        "http": 409,
+        "trace": "efbd2a8575984bd7bc79304b79b32a5e",
+        "ms": 24.2
+      },
+      "utc": "2026-11-07T21:54:28Z"
+    },
+    {
+      "id": "C7",
+      "expected": "approver 2 -> status executed",
+      "actual": "200 executed",
+      "status": "PASS",
+      "evidence": {
+        "approver": "<cene-agent-service-account>",
+        "http": 200,
+        "trace": "5a16790d86884f26bc79304b79b3227f",
+        "ms": 447.8
+      },
+      "utc": "2026-11-07T21:54:32Z"
+    },
+    {
+      "id": "C8",
+      "expected": "409 ESCROW_CLOSED",
+      "actual": "409 ESCROW_CLOSED",
+      "status": "PASS",
+      "evidence": {
+        "http": 409,
+        "trace": "cd0297291697dd43fa4e8d2b4a8dca61",
+        "ms": 24.0
+      },
+      "utc": "2026-11-07T21:54:32Z"
+    },
+    {
+      "id": "C9",
+      "expected": "APPROVER_UNKNOWN or 401/403",
+      "actual": "403 Cloud Run",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "ms": 341.7
+      },
+      "utc": "2026-11-07T21:54:32Z"
+    },
+    {
+      "id": "C10",
+      "expected": "requester's own approval refused (SELF_APPROVAL)",
+      "actual": "200 pending",
+      "status": "FAIL",
+      "evidence": {
+        "requester": "<tester-google-account>",
+        "agent_id": "ap-agent",
+        "escrow_id": "d5abc3876ab4",
+        "http": 200,
+        "trace": "5114505d7b2d67cffa4e8d2b4a8dc040",
+        "ms": 71.9
+      },
+      "utc": "2026-11-07T21:54:33Z"
+    },
+    {
+      "id": "C11",
+      "expected": "tier 1 after healthy reload",
+      "actual": "tier 1",
+      "status": "PASS",
+      "evidence": {
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        }
+      },
+      "utc": "2026-11-07T21:54:58Z"
+    }
+  ],
+  "extra": {
+    "run_start": 1794088435.5339847,
+    "C_jti": "93f387b7f2224ebe9b4280f215cef48c",
+    "C_end": 1794088473.185745,
+    "run_end": 1794088498.3903887
+  }
+}

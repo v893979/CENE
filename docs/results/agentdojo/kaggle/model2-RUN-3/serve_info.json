@@ -1,0 +1,29 @@
+{
+ "stack": "transformers",
+ "transformers": "5.22.2",
+ "torch": "2.11.0+cu130",
+ "cuda_devices": [
+  "Tesla T4",
+  "Tesla T4"
+ ],
+ "dtype": "float16",
+ "attn_implementation": "sdpa",
+ "max_memory_gib": 14.0,
+ "max_new_tokens": 1024,
+ "path": "/kaggle/input/models/qwen-lm/qwen-3/transformers/8b/1",
+ "name": "qwen3-8b",
+ "chat_template_sha256": "87a2728cb8dc9fe424d624542f6060ec05a1d285ebbec578bb078900e33396b5",
+ "chat_template_mentions_enable_thinking": true,
+ "thinking": "off: enable_thinking=False passed to the template; the thinking channel is also stripped from every reply",
+ "model_type": "qwen3",
+ "family": "qwen3",
+ "response_template_source": "transformers.cli.serving.utils",
+ "text_only_result": "not applicable: text-only checkpoint",
+ "model_class": "Qwen3ForCausalLM",
+ "text_only": true,
+ "device_map": [
+  "0",
+  "1"
+ ],
+ "load_seconds": 39.3
+}

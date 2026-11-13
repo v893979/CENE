@@ -1,0 +1,58 @@
+product: fx_ticks
+owner: markets-data
+key_column: tick_id
+freshness:
+  sla_seconds: 120
+lineage:
+  upstreams:
+  - market_data_vendor
+columns:
+  tick_id:
+    type: string
+    criticality: 3
+    pattern: ^T-\d{7}$
+  pair:
+    type: string
+    criticality: 3
+    allowed:
+    - AUDUSD
+    - AUDEUR
+    - AUDJPY
+  rate:
+    type: number
+    criticality: 3
+    min: 0.0001
+    max: 500
+  spread:
+    type: number
+    criticality: 2
+    min: 0
+    max: 0.01
+  volume:
+    type: number
+    criticality: 1
+    min: 0
+tools:
+  write:
+    execute_fx_transfer:
+      args:
+        pair:
+          enum:
+          - AUDUSD
+          - AUDEUR
+          - AUDJPY
+        amount:
+          type: number
+          min: 1000
+        account_id: ^TRS-\d{3}$
+      limits:
+        amount_max: 10000000
+temporal:
+- name: hourly_transfer_ceiling
+  tool: execute_fx_transfer
+  type: sum_within
+  field: amount
+  by:
+  - agent
+  window_seconds: 3600
+  max: 25000000

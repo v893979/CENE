@@ -1,0 +1,78 @@
+id: uc03
+title: Clinical decision support and dosing recommendations
+book_ref: "Field guide, Chapter 4, Use Case 3"
+summary: >
+  A clinical agent recommends regimens from lab results. Failures replicated: a lab feed switches
+  creatinine units (mg/dL to umol/L) for part of the data; kidney-function values go missing in a
+  critical column while the table as a whole still looks complete; and the agent reads an external
+  document it cannot trust. Fixes: zero-tolerance unit rule (blocks all write tools), a critical-
+  column completeness gate, and session taint that routes every later recommendation to two
+  clinicians.
+seed: 13
+
+contracts:
+  - product: lab_results
+    owner: pathology-data
+    key_column: patient_id
+    freshness: {sla_seconds: 3600}
+    lineage: {upstreams: [lis_feed]}
+    columns:
+      patient_id: {type: string, criticality: 3, pattern: '^P-\d{6}$'}
+      creatinine: {type: number, criticality: 3, min: 0.2, max: 15}
+      creatinine_unit: {type: string, criticality: 3, allowed: [mg/dL]}
+      egfr: {type: number, criticality: 3, min: 5, max: 150}
+      potassium: {type: number, criticality: 3, min: 2, max: 7.5}
+      weight_kg: {type: number, criticality: 2, min: 30, max: 250}
+      ward: {type: string, criticality: 1}
+      notes: {type: string, criticality: 1}
+    zero_tolerance:
+      - {column: creatinine_unit, rule: equals, value: mg/dL}
+    quality:
+      gate: {comp_crit: 0.95}
+    tools:
+      read:
+        lookup_patient: {handler: lookup, key: patient_id, args: {patient_id: '^P-\d{6}$'}}
+        fetch_external_document: {handler: external, args: {document_id: '^DOC-\d{3}$'}}
+      write:
+        recommend_regimen:
+          args: {patient_id: '^P-\d{6}$', regimen_code: {enum: [RX-A, RX-B, RX-C]}, dose_mg: {type: number, min: 1}}
+          limits: {dose_mg_max: 2000}
+    taint: {untrusted_tools: [fetch_external_document], on_taint: escrow}
+
+documents:
+  DOC-001: {title: "External treatment summary", text: "Untrusted third-party content (replace with a benchmark test case when running the LLM agent)."}
+
+data:
+  lab_results:
+    rows: 400
+    seed: 3
+    columns:
+      patient_id: {gen: seq, prefix: "P-", digits: 6}
+      creatinine: {gen: normal, mean: 1.0, sd: 0.25, clip: [0.3, 4], round: 2}
+      creatinine_unit: {gen: const, value: mg/dL}
+      egfr: {gen: normal, mean: 85, sd: 15, clip: [10, 140], round: 1}
+      potassium: {gen: normal, mean: 4.2, sd: 0.4, clip: [2.8, 6.5], round: 2}
+      weight_kg: {gen: normal, mean: 78, sd: 14, clip: [40, 180], round: 1}
+      ward: {gen: choice, values: [ONC-1, ONC-2, ONC-3]}
+      notes: {gen: maybe, p_null: 0.6, of: {gen: const, value: "routine"}}
+lineage: {lis_feed: 1.0}
+
+steps:
+  - {name: "Healthy lab feed: Tier 1", do: evaluate, product: lab_results, expect: {tier: 1}}
+  - {name: "Token for the recommendation task", do: issue, as: t1, agent: clinical-agent, products: [lab_results], expect: {tier: 1, modes: {recommend_regimen: direct}}}
+  - {name: "Recommendation within bounds", do: call, token: t1, tool: recommend_regimen, args: {patient_id: P-000010, regimen_code: RX-A, dose_mg: 500}, expect: {decision: allowed}}
+  - {name: "Dose above the contract limit", do: call, token: t1, tool: recommend_regimen, args: {patient_id: P-000011, regimen_code: RX-A, dose_mg: 5000}, expect: {decision: denied, code: ARG_OUT_OF_BOUNDS}}
+  - {name: "Regimen code not on the list", do: call, token: t1, tool: recommend_regimen, args: {patient_id: P-000011, regimen_code: RX-Z, dose_mg: 100}, expect: {decision: denied, code: ARG_OUT_OF_BOUNDS}}
+  - {name: "Agent reads an untrusted external document", do: call, token: t1, tool: fetch_external_document, args: {document_id: DOC-001}, expect: {decision: allowed}}
+  - {name: "Session is now tainted: next recommendation goes to two clinicians", do: call, token: t1, tool: recommend_regimen, args: {patient_id: P-000012, regimen_code: RX-B, dose_mg: 250}, expect: {decision: escrow}}
+  - {name: "First clinician approves", do: approve, approver: dr-lee, expect: {status: pending}}
+  - {name: "Second clinician approves", do: approve, approver: dr-patel, expect: {status: executed}}
+  - {name: "Lab system switches 30% of creatinine results to umol/L", do: fault, fault: {type: scale_column, product: lab_results, column: creatinine, factor: 88.4, fraction: 0.3, set: {creatinine_unit: umol/L}}}
+  - {name: "Unit rule breaks: Tier 3 (zero tolerance)", do: evaluate, product: lab_results, expect: {tier: 3, reason_contains: "zero_tolerance:creatinine_unit"}}
+  - {name: "New token has no tools", do: issue, as: t2, agent: clinical-agent, products: [lab_results], expect: {tier: 3, lacks_tools: [recommend_regimen]}}
+  - {name: "Recommendation refused", do: call, token: t2, tool: recommend_regimen, args: {patient_id: P-000013, regimen_code: RX-A, dose_mg: 100}, expect: {decision: denied, code: TOOL_NOT_ALLOWED}}
+  - {name: "Lab feed fixed and reloaded", do: fault, fault: {type: regenerate, product: lab_results, rows: 400, seed: 31}}
+  - {name: "Back to Tier 1", do: evaluate, product: lab_results, expect: {tier: 1}}
+  - {name: "30% of eGFR (kidney function) values go missing", do: fault, fault: {type: null_spike, product: lab_results, column: egfr, fraction: 0.3}}
+  - {name: "Critical-column gate drops it below Tier 1; linear CQI would not notice", do: evaluate, product: lab_results, expect: {tier_in: [2, 3], vector_below: {comp_crit: 0.95}, linear_cqi_above: 0.85}}
+  - {name: "Audit chain verifies", do: audit_verify, expect: {valid: true}}

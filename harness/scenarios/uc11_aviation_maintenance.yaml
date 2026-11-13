@@ -1,0 +1,56 @@
+id: uc11
+title: Aviation fleet predictive maintenance and release
+book_ref: "Field guide, Chapter 4, Use Case 11"
+summary: >
+  A maintenance agent releases aircraft for service from engine telemetry. Failures replicated: a
+  vibration sensor drops out and reports 0.0 (physically impossible for a running engine), and
+  release calls made with no token, a forged token or an edited token. Fixes: a zero-tolerance
+  physical-floor rule, and signed tokens that the gateway verifies on every call.
+seed: 21
+
+contracts:
+  - product: engine_telemetry
+    owner: engineering-data
+    key_column: tail_number
+    freshness: {sla_seconds: 7200}
+    lineage: {upstreams: [acars_feed]}
+    columns:
+      tail_number: {type: string, criticality: 3, pattern: '^VH-[A-Z]{3}$'}
+      vibration_ips: {type: number, criticality: 3, min: 0.05, max: 2.0}
+      egt_c: {type: number, criticality: 3, min: 200, max: 1100}
+      oil_pressure_psi: {type: number, criticality: 3, min: 10, max: 120}
+    zero_tolerance:
+      - {column: vibration_ips, rule: min, value: 0.05}
+    tools:
+      read:
+        lookup_engine: {handler: lookup, key: tail_number, args: {tail_number: '^VH-[A-Z]{3}$'}}
+      write:
+        release_aircraft:
+          args: {tail_number: '^VH-[A-Z]{3}$', work_order: '^WO-\d{5}$'}
+
+data:
+  engine_telemetry:
+    rows: 450
+    seed: 11
+    load_age_seconds: 300
+    columns:
+      tail_number: {gen: choice, values: [VH-QPA, VH-QPB, VH-QPC, VH-QPD, VH-QPE, VH-QPF]}
+      vibration_ips: {gen: normal, mean: 0.35, sd: 0.06, clip: [0.1, 1.2], round: 3}
+      egt_c: {gen: normal, mean: 620, sd: 25, round: 1}
+      oil_pressure_psi: {gen: normal, mean: 55, sd: 4, round: 1}
+lineage: {acars_feed: 1.0}
+
+steps:
+  - {name: "Healthy telemetry: Tier 1", do: evaluate, product: engine_telemetry, expect: {tier: 1}}
+  - {name: "Token for the release task", do: issue, as: t1, agent: mx-agent, products: [engine_telemetry], expect: {tier: 1}}
+  - {name: "Release with a valid work order", do: call, token: t1, tool: release_aircraft, args: {tail_number: VH-QPB, work_order: WO-10001}, expect: {decision: allowed}}
+  - {name: "Release call with no token", do: call, tool: release_aircraft, args: {tail_number: VH-QPB, work_order: WO-10002}, expect: {decision: denied, code: TOKEN_MISSING}}
+  - {name: "Token re-signed with an untrusted key", do: forge_token, from: t1, as: forged}
+  - {name: "Forged token refused", do: call, token: forged, tool: release_aircraft, args: {tail_number: VH-QPB, work_order: WO-10003}, expect: {decision: denied, code: TOKEN_UNKNOWN_KEY}}
+  - {name: "Token edited to extend its expiry", do: tamper_token, from: t1, as: edited, set: {exp: 9999999999}}
+  - {name: "Edited token refused", do: call, token: edited, tool: release_aircraft, args: {tail_number: VH-QPB, work_order: WO-10004}, expect: {decision: denied, code: TOKEN_BAD_SIGNATURE}}
+  - {name: "Vibration sensor on VH-QPA drops out and reads 0.0", do: fault, fault: {type: set_value, product: engine_telemetry, where: {tail_number: VH-QPA}, set: {vibration_ips: 0.0}}}
+  - {name: "Physical-floor rule: Tier 3", do: evaluate, product: engine_telemetry, expect: {tier: 3, reason_contains: "zero_tolerance:vibration_ips"}}
+  - {name: "Release rights withdrawn", do: issue, as: t2, agent: mx-agent, products: [engine_telemetry], expect: {tier: 3, lacks_tools: [release_aircraft]}}
+  - {name: "Release refused: aircraft stays on the ground for inspection", do: call, token: t2, tool: release_aircraft, args: {tail_number: VH-QPA, work_order: WO-10005}, expect: {decision: denied, code: TOOL_NOT_ALLOWED}}
+  - {name: "Baseline: without controls the release goes through", do: direct, tool: release_aircraft, args: {tail_number: VH-QPA, work_order: WO-10005}}

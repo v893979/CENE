@@ -1,0 +1,19 @@
+# Laptop stack: three services + Redis, local keys, in-memory data seeded from one scenario.
+# docker compose up --build   then   python -m agent.runner ... --control-url http://localhost:8081 --gateway-url http://localhost:8082
+# Note: in local mode each container seeds its own copy of the scenario data and keys, so for the
+# laptop demo use the single "all" service (port 8080). The split services are for checking
+# the Cloud Run topology (they need shared keys/data, which Google Cloud mode provides).
+services:
+  all:
+    build: .
+    environment:
+      CENE_SERVICE: all
+      CENE_SEED_SCENARIO: uc01
+      CENE_REDIS_URL: redis://redis:6379/0
+      CENE_AUDIT_FILE: /data/audit.jsonl
+    volumes: ["./_data:/data"]
+    ports: ["8080:8080"]
+    depends_on: [redis]
+  redis:
+    image: redis:7-alpine
+    ports: ["6379:6379"]

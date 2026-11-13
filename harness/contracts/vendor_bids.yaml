@@ -1,0 +1,62 @@
+product: vendor_bids
+owner: procurement-data
+key_column: bid_id
+freshness:
+  sla_seconds: 86400
+lineage:
+  upstreams:
+  - approved_spec_repo
+  - vendor_portal
+columns:
+  bid_id:
+    type: string
+    criticality: 3
+    pattern: ^B-\d{5}$
+  part_number:
+    type: string
+    criticality: 3
+    pattern: ^TF-\d{4}-[A-Z]$
+  spec_revision:
+    type: string
+    criticality: 3
+    allowed:
+    - R7
+  material:
+    type: string
+    criticality: 3
+    allowed:
+    - Ti-6Al-4V
+  unit_price:
+    type: number
+    criticality: 2
+    min: 0.01
+    max: 10000
+  quantity:
+    type: number
+    criticality: 2
+    min: 1
+    max: 100000
+  vendor_id:
+    type: string
+    criticality: 2
+    pattern: ^SUP-\d{3}$
+tools:
+  write:
+    issue_purchase_order:
+      args:
+        bid_id: ^B-\d{5}$
+        part_number: ^TF-\d{4}-[A-Z]$
+        spec_revision:
+          enum:
+          - R7
+        quantity:
+          type: number
+          min: 1
+      limits:
+        quantity_max: 10000
+      bind:
+        keys:
+        - bid_id
+        - part_number
+        max:
+          quantity: quantity

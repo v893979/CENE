@@ -1,0 +1,21 @@
+{
+  "title": "CENE: Context-Enforcement Network Engine",
+  "upload_type": "software",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "creators": [
+    {
+      "name": "Rastogi, Vaibhav",
+      "affiliation": "Independent Researcher, Melbourne, Australia",
+      "orcid": "0009-0006-0900-4376"
+    }
+  ],
+  "description": "CENE enforces an AI agent's scope outside the model: data-quality tiers set the agent's authority, a short-lived signed Context Token lists the tools, arguments and rows a task may use, a gateway checks every tool call (refusing, or holding for two approvers) and a hash-chained audit log records every decision. This release includes the AgentDojo evaluation code (frozen policy agentdojo-policy-v1) used with Gemma 4 12B-it and Qwen3-8B.",
+  "keywords": [
+    "AI agents",
+    "prompt injection",
+    "tool-call enforcement",
+    "AgentDojo",
+    "audit"
+  ]
+}

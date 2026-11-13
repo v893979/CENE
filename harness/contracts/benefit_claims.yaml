@@ -1,0 +1,92 @@
+product: benefit_claims
+owner: payments-data
+key_column: claim_id
+freshness:
+  sla_seconds: 21600
+lineage:
+  upstreams:
+  - identity_service
+  - income_verification
+duplicate_keys:
+- narrative_code
+- payout
+- bank_bsb
+columns:
+  claim_id:
+    type: string
+    criticality: 3
+    pattern: ^CL-\d{6}$
+  citizen_id:
+    type: string
+    criticality: 3
+    pattern: ^CZ-\d{6}$
+  postal_district:
+    type: string
+    criticality: 3
+    pattern: ^D-\d{2}$
+  payout:
+    type: number
+    criticality: 3
+    min: 0
+    max: 3500
+  income_source:
+    type: string
+    criticality: 3
+    allowed:
+    - payroll_actual
+    - tax_office_actual
+    - self_reported_verified
+  narrative_code:
+    type: string
+    criticality: 2
+    pattern: ^N\d{3}$
+  bank_bsb:
+    type: string
+    criticality: 2
+    pattern: ^\d{3}-\d{3}$
+zero_tolerance:
+- column: income_source
+  rule: not_in_source
+  values:
+  - averaged_annual
+tools:
+  write:
+    approve_benefit:
+      args:
+        claim_id: ^CL-\d{6}$
+        postal_district: ^D-\d{2}$
+        payout:
+          type: number
+          min: 1
+      limits:
+        payout_max: 3500
+      bind:
+        keys:
+        - claim_id
+        - postal_district
+        max:
+          payout: payout
+    raise_debt_notice:
+      args:
+        citizen_id: ^CZ-\d{6}$
+        amount:
+          type: number
+          min: 1
+      limits:
+        amount_max: 20000
+      always_escrow: true
+temporal:
+- name: one_payment_per_claim
+  tool: approve_benefit
+  type: once_per
+  by:
+  - claim_id
+  window_seconds: 31536000
+- name: district_daily_ceiling
+  tool: approve_benefit
+  type: sum_within
+  field: payout
+  by:
+  - postal_district
+  window_seconds: 86400
+  max: 12000

@@ -1,0 +1,200 @@
+{
+ "revision": {
+  "tag": "agentdojo-policy-v1",
+  "policy_tag": "agentdojo-policy-v1",
+  "policy_commit": "7f04c1b510298bf0beafece8e3b59bd6e41d902d",
+  "run_tag": "agentdojo-run-r4-model2",
+  "run_commit": "08d3e15d5a16ac8a339f3e897487702519f010fd",
+  "commit": "08d3e15d5a16ac8a339f3e897487702519f010fd",
+  "model": "qwen3-8b",
+  "policy_files_unchanged": true,
+  "packaged": "2026-11-12T07:07:30Z"
+ },
+ "session": "RUN",
+ "week": 1,
+ "quota_left_hours_at_start": 7.4,
+ "gpus": "Tesla T4, 15360 MiB, 580.178.04\nTesla T4, 15360 MiB, 580.178.04",
+ "agentdojo_wheel_sha256": "364bea4219716b716bf639f504d195943f7f6a5535d312ca41d7098704a2affd",
+ "resumed": [
+  "check.json",
+  "select_native_tools.json",
+  "tool_mode.json"
+ ],
+ "serve_attempts": [
+  {
+   "id": "hf-qwen3-8b",
+   "path": "/kaggle/input/models/qwen-lm/qwen-3/transformers/8b/1",
+   "transformers": "5.22.2",
+   "torch": "2.11.0+cu130",
+   "args": [
+    "/usr/bin/python3",
+    "-m",
+    "cene_agentdojo.serve_hf",
+    "--model",
+    "/kaggle/input/models/qwen-lm/qwen-3/transformers/8b/1",
+    "--name",
+    "qwen3-8b",
+    "--port",
+    "8000",
+    "--dtype",
+    "float16",
+    "--attn-implementation",
+    "sdpa",
+    "--max-memory-gib",
+    "14",
+    "--max-new-tokens",
+    "1024",
+    "--info-out",
+    "/kaggle/working/serve_info.json",
+    "--family",
+    "qwen3"
+   ],
+   "result": "ok",
+   "detail": "OK.",
+   "seconds": 97
+  }
+ ],
+ "served": {
+  "id": "hf-qwen3-8b",
+  "stack": "transformers",
+  "name": "qwen3-8b",
+  "folder": "8b",
+  "path_must_contain": "qwen-3",
+  "family": "qwen3",
+  "gpus": "0,1",
+  "dtype": "float16",
+  "attn_implementation": "sdpa",
+  "text_only": true,
+  "max_memory_gib_per_gpu": 14,
+  "timeout_minutes": 30,
+  "path": "/kaggle/input/models/qwen-lm/qwen-3/transformers/8b/1",
+  "files": [
+   [
+    "README.md",
+    16544
+   ],
+   [
+    "config.json",
+    728
+   ],
+   [
+    "generation_config.json",
+    239
+   ],
+   [
+    "merges.txt",
+    1671853
+   ],
+   [
+    "model-00001-of-00005.safetensors",
+    3996250744
+   ],
+   [
+    "model-00002-of-00005.safetensors",
+    3993160032
+   ],
+   [
+    "model-00003-of-00005.safetensors",
+    3959604768
+   ],
+   [
+    "model-00004-of-00005.safetensors",
+    3187841392
+   ],
+   [
+    "model-00005-of-00005.safetensors",
+    1244659840
+   ],
+   [
+    "model.safetensors.index.json",
+    32878
+   ],
+   [
+    "tokenizer.json",
+    11422654
+   ],
+   [
+    "tokenizer_config.json",
+    9675
+   ],
+   [
+    "vocab.json",
+    2776833
+   ]
+  ],
+  "server_info": {
+   "stack": "transformers",
+   "transformers": "5.22.2",
+   "torch": "2.11.0+cu130",
+   "cuda_devices": [
+    "Tesla T4",
+    "Tesla T4"
+   ],
+   "dtype": "float16",
+   "attn_implementation": "sdpa",
+   "max_memory_gib": 14.0,
+   "max_new_tokens": 1024,
+   "path": "/kaggle/input/models/qwen-lm/qwen-3/transformers/8b/1",
+   "name": "qwen3-8b",
+   "chat_template_sha256": "87a2728cb8dc9fe424d624542f6060ec05a1d285ebbec578bb078900e33396b5",
+   "chat_template_mentions_enable_thinking": true,
+   "thinking": "off: enable_thinking=False passed to the template; the thinking channel is also stripped from every reply",
+   "model_type": "qwen3",
+   "family": "qwen3",
+   "response_template_source": "transformers.cli.serving.utils",
+   "text_only_result": "not applicable: text-only checkpoint",
+   "model_class": "Qwen3ForCausalLM",
+   "text_only": true,
+   "device_map": [
+    "0",
+    "1"
+   ],
+   "load_seconds": 38.0
+  },
+  "transformers": "5.22.2",
+  "torch": "2.11.0+cu130",
+  "args": [
+   "/usr/bin/python3",
+   "-m",
+   "cene_agentdojo.serve_hf",
+   "--model",
+   "/kaggle/input/models/qwen-lm/qwen-3/transformers/8b/1",
+   "--name",
+   "qwen3-8b",
+   "--port",
+   "8000",
+   "--dtype",
+   "float16",
+   "--attn-implementation",
+   "sdpa",
+   "--max-memory-gib",
+   "14",
+   "--max-new-tokens",
+   "1024",
+   "--info-out",
+   "/kaggle/working/serve_info.json",
+   "--family",
+   "qwen3"
+  ]
+ },
+ "decoding": {
+  "temperature": 0.0,
+  "top_p": 0.9,
+  "per_request_seed": "random.randint(0, 1000000) after random.seed(seed_base + episode_index)",
+  "seed_base": 1000,
+  "episode_index": "100 * user_task_number + injection_task_number; 99 for no-attack episodes",
+  "concurrency": 1
+ },
+ "versions": {
+  "vllm": null,
+  "transformers": "5.22.2",
+  "torch": "2.11.0+cu130",
+  "agentdojo": null,
+  "openai": "2.54.0"
+ },
+ "setup_seconds": 164,
+ "finished": 1794486587.1885386,
+ "tool_mode": {
+  "provider": "native"
+ }
+}

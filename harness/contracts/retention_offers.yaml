@@ -1,0 +1,52 @@
+product: retention_offers
+owner: customer-data
+key_column: subscriber_id
+freshness:
+  sla_seconds: 3600
+lineage:
+  upstreams:
+  - billing_system
+columns:
+  subscriber_id:
+    type: string
+    criticality: 3
+    pattern: ^SUB-\d{6}$
+  tenure_months:
+    type: number
+    criticality: 2
+    min: 0
+    max: 600
+  monthly_bill:
+    type: number
+    criticality: 2
+    min: 0
+    max: 1000
+  churn_risk:
+    type: number
+    criticality: 3
+    min: 0
+    max: 1
+  offer_ceiling:
+    type: number
+    criticality: 3
+    min: 0
+    max: 1200
+tools:
+  write:
+    apply_credit:
+      args:
+        subscriber_id: ^SUB-\d{6}$
+        credit_amount:
+          type: number
+          min: 1
+        duration_months:
+          type: number
+          min: 1
+      limits:
+        credit_amount_max: 1200
+        duration_months_max: 24
+      bind:
+        keys:
+        - subscriber_id
+        max:
+          credit_amount: offer_ceiling

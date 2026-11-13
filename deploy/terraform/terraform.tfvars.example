@@ -1,0 +1,8 @@
+project_id           = "your-cene-test-project"
+region               = "australia-southeast2"
+bq_location          = "australia-southeast2"
+image_tag            = "v1"
+kms_protection_level = "SOFTWARE" # switch to "HSM" once everything works
+enable_redis         = false
+oracle_signers       = ["user:you@example.com"]
+operators            = ["user:you@example.com"]

@@ -1,0 +1,19 @@
+# Core (local mode and all services)
+starlette>=0.37
+uvicorn>=0.29
+cryptography>=42
+numpy>=1.26
+pandas>=2.1
+scipy>=1.11
+scikit-learn>=1.4
+PyYAML>=6.0
+requests>=2.31
+# Google Cloud mode
+google-cloud-kms>=2.21
+google-cloud-bigquery>=3.17
+db-dtypes>=1.2
+google-cloud-storage>=2.14
+google-auth>=2.27
+redis>=5.0
+# Tests
+pytest>=8

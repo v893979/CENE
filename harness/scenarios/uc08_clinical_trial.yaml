@@ -1,0 +1,58 @@
+id: uc08
+title: Clinical-trial data mesh and safety-signal reporting
+book_ref: "Field guide, Chapter 4, Use Case 8"
+summary: >
+  An agent files periodic safety summaries from adverse-event data across trial sites. Failures
+  replicated: a contract research organisation's schema migration drops severity codes (rows still
+  arrive, so volume monitors stay green), and the upstream pipeline that produced the data is not
+  the approved one. Fixes: a zero-tolerance not-null rule on severity, lineage scoring, and an
+  audit log whose integrity can be proven to a regulator.
+seed: 18
+
+contracts:
+  - product: adverse_events
+    owner: pharmacovigilance
+    key_column: event_id
+    freshness: {sla_seconds: 86400}
+    lineage: {upstreams: [cro_pipeline_v4]}
+    columns:
+      event_id: {type: string, criticality: 3, pattern: '^AE-\d{6}$'}
+      site_id: {type: string, criticality: 2, pattern: '^S-\d{3}$'}
+      severity_code: {type: string, criticality: 3, allowed: ["1", "2", "3", "4", "5"]}
+      alt_u_l: {type: number, criticality: 3, min: 1, max: 2000}
+      ast_u_l: {type: number, criticality: 3, min: 1, max: 2000}
+    zero_tolerance:
+      - {column: severity_code, rule: not_null}
+    tools:
+      write:
+        submit_safety_summary:
+          args: {period: '^\d{4}-Q[1-4]$', status: {enum: [no_new_signal, signal_detected]}}
+
+data:
+  adverse_events:
+    rows: 500
+    seed: 8
+    load_age_seconds: 7200
+    columns:
+      event_id: {gen: seq, prefix: "AE-", digits: 6}
+      site_id: {gen: choice, values: [S-001, S-002, S-003, S-004, S-005, S-006]}
+      severity_code: {gen: choice, values: ["1", "2", "3", "4", "5"], weights: [40, 30, 18, 9, 3]}
+      alt_u_l: {gen: lognormal, mean: 3.4, sigma: 0.4, clip: [5, 900], round: 0}
+      ast_u_l: {gen: lognormal, mean: 3.3, sigma: 0.4, clip: [5, 900], round: 0}
+lineage: {cro_pipeline_v4: 1.0}
+
+steps:
+  - {name: "Trial data: Tier 1", do: evaluate, product: adverse_events, expect: {tier: 1}}
+  - {name: "Token for the quarterly summary", do: issue, as: t1, agent: pv-agent, products: [adverse_events], expect: {tier: 1}}
+  - {name: "File a summary", do: call, token: t1, tool: submit_safety_summary, args: {period: 2026-Q3, status: no_new_signal}, expect: {decision: allowed}}
+  - {name: "Malformed period refused", do: call, token: t1, tool: submit_safety_summary, args: {period: "2026-Q3; all clear", status: no_new_signal}, expect: {decision: denied, code: ARG_OUT_OF_BOUNDS}}
+  - {name: "CRO migration drops 5% of severity codes (rows still arrive)", do: fault, fault: {type: null_spike, product: adverse_events, column: severity_code, fraction: 0.05}}
+  - {name: "Zero-tolerance rule: Tier 3; linear CQI still looks healthy", do: evaluate, product: adverse_events, expect: {tier: 3, reason_contains: "zero_tolerance:severity_code", linear_cqi_above: 0.9}}
+  - {name: "No token rights to file an 'all clear'", do: issue, as: t2, agent: pv-agent, products: [adverse_events], expect: {tier: 3, lacks_tools: [submit_safety_summary]}}
+  - {name: "Filing refused", do: call, token: t2, tool: submit_safety_summary, args: {period: 2026-Q4, status: no_new_signal}, expect: {decision: denied, code: TOOL_NOT_ALLOWED}}
+  - {name: "Severity codes repaired, data reloaded", do: fault, fault: {type: regenerate, product: adverse_events, rows: 500, seed: 81, age_seconds: 600}}
+  - {name: "Data came through an unapproved pipeline", do: fault, fault: {type: lineage, node: cro_pipeline_v4, health: 0.0}}
+  - {name: "Lineage breaks: Tier 3", do: evaluate, product: adverse_events, expect: {tier: 3, vector_below: {lin: 0.1}}}
+  - {name: "Audit trail verifies for the regulator", do: audit_verify, expect: {valid: true}}
+  - {name: "A decision record is altered afterwards", do: audit_tamper}
+  - {name: "Alteration detected", do: audit_verify, expect: {valid: false}}

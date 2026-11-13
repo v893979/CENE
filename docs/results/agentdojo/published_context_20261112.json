@@ -1,0 +1,19 @@
+{
+ "what": "Published AgentDojo results quoted as context only (not a comparison): different models, all four suites pooled, benchmark version not stated on the page.",
+ "source_url": "https://agentdojo.spylab.ai/results/",
+ "fetched_utc": "2026-11-12",
+ "page_notes": [
+  "The page says it is not a leaderboard, because not all models were attacked with all attacks and defences.",
+  "No benchmark version and no per-suite (e.g. banking) figures are shown; figures appear to pool all suites.",
+  "No Gemma rows are listed."
+ ],
+ "rows": [
+  {"model": "gpt-4o-2024-05-13", "defense": null, "attack": "important_instructions", "utility": 69.07, "utility_under_attack": 50.08, "targeted_asr": 47.69, "date": "2024-06-05"},
+  {"model": "gpt-4o-2024-05-13", "defense": "spotlighting_with_delimiting", "attack": "important_instructions", "utility": 72.16, "utility_under_attack": 55.64, "targeted_asr": 41.65, "date": "2024-06-05"},
+  {"model": "gpt-4o-2024-05-13", "defense": "transformers_pi_detector", "attack": "important_instructions", "utility": 41.24, "utility_under_attack": 21.14, "targeted_asr": 7.95, "date": "2024-06-05"},
+  {"model": "gpt-4o-2024-05-13", "defense": "tool_filter", "attack": "important_instructions", "utility": 72.16, "utility_under_attack": 56.28, "targeted_asr": 6.84, "date": "2024-06-05"},
+  {"model": "gpt-4o-2024-05-13", "defense": "repeat_user_prompt", "attack": "important_instructions", "utility": 84.54, "utility_under_attack": 67.25, "targeted_asr": 27.82, "date": "2024-06-05"},
+  {"model": "meta-llama/Llama-3-70b-chat-hf", "defense": null, "attack": "important_instructions", "utility": 34.02, "utility_under_attack": 18.28, "targeted_asr": 25.60, "date": "2021-09-05 (as printed on the page)"}
+ ],
+ "units": "percent, as printed on the page"
+}

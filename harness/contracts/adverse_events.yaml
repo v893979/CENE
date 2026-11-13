@@ -1,0 +1,48 @@
+product: adverse_events
+owner: pharmacovigilance
+key_column: event_id
+freshness:
+  sla_seconds: 86400
+lineage:
+  upstreams:
+  - cro_pipeline_v4
+columns:
+  event_id:
+    type: string
+    criticality: 3
+    pattern: ^AE-\d{6}$
+  site_id:
+    type: string
+    criticality: 2
+    pattern: ^S-\d{3}$
+  severity_code:
+    type: string
+    criticality: 3
+    allowed:
+    - '1'
+    - '2'
+    - '3'
+    - '4'
+    - '5'
+  alt_u_l:
+    type: number
+    criticality: 3
+    min: 1
+    max: 2000
+  ast_u_l:
+    type: number
+    criticality: 3
+    min: 1
+    max: 2000
+zero_tolerance:
+- column: severity_code
+  rule: not_null
+tools:
+  write:
+    submit_safety_summary:
+      args:
+        period: ^\d{4}-Q[1-4]$
+        status:
+          enum:
+          - no_new_signal
+          - signal_detected

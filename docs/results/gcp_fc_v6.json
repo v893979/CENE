@@ -1,0 +1,79 @@
+{
+  "control": "https://<cene-control-url>",
+  "gateway": "https://<cene-gateway-url>",
+  "user": "<tester-google-account>",
+  "summary": {
+    "F": {
+      "PASS": 3,
+      "FAIL": 1,
+      "SKIP": 0
+    }
+  },
+  "checks": [
+    {
+      "id": "FC1",
+      "expected": "lookup_invoice -> 403 STATE_UNAVAILABLE in < 3 s",
+      "actual": "403 STATE_UNAVAILABLE in 3979 ms",
+      "status": "FAIL",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "78a95429f8640eb33f89056cd2e94b97",
+        "ms": 3978.9
+      },
+      "utc": "2026-11-08T02:15:02Z"
+    },
+    {
+      "id": "FC2",
+      "expected": "approve_payment (valid binding) -> 403 STATE_UNAVAILABLE; no call reaches cene-tools",
+      "actual": "403 STATE_UNAVAILABLE in 1078 ms; cene-tools requests in window: 0",
+      "status": "PASS",
+      "evidence": {
+        "invoice": "INV-000358",
+        "http": 403,
+        "decision": "denied",
+        "trace": "a72fa4e6f1e92a033f89056cd2e948d7",
+        "ms": 1078.1,
+        "tools_requests_in_window": 0
+      },
+      "utc": "2026-11-08T02:15:03Z"
+    },
+    {
+      "id": "FC3",
+      "expected": "10 calls in a row all denied; median and max time to deny",
+      "actual": "10/10 denied; median 1079 ms, max 1094 ms",
+      "status": "PASS",
+      "evidence": {
+        "median_ms": 1079.0,
+        "max_ms": 1094.3
+      },
+      "utc": "2026-11-08T02:15:14Z"
+    },
+    {
+      "id": "FC4",
+      "expected": "12 decision events, all denied STATE_UNAVAILABLE",
+      "actual": "12 STATE_UNAVAILABLE, 0 other",
+      "status": "PASS",
+      "evidence": {
+        "audit_prefix": "audit/cene-gateway-failclosed/"
+      },
+      "utc": "2026-11-08T02:16:14Z"
+    }
+  ],
+  "extra": {
+    "run_start": 1794104079.9802594,
+    "fc3_ms": [
+      1085.0,
+      1079.6,
+      1094.3,
+      1082.6,
+      1077.3,
+      1077.3,
+      1078.3,
+      1073.4,
+      1075.8,
+      1081.8
+    ],
+    "run_end": 1794104174.8307593
+  }
+}

@@ -1,0 +1,72 @@
+id: uc12
+title: Public benefits and social-assistance decisions
+book_ref: "Field guide, Chapter 4, Use Case 12"
+summary: >
+  An agent approves emergency payments and could raise overpayment debts. Failures replicated: a
+  coordinated run of near-identical claims, payouts concentrated in one district, and debts
+  calculated from averaged annual income instead of actual fortnightly income (the Robodebt
+  lesson). Fixes: duplicate-cluster detection, a district daily ceiling, a zero-tolerance rule
+  that rejects averaged income as a source, and debt notices that always need two people.
+seed: 22
+
+contracts:
+  - product: benefit_claims
+    owner: payments-data
+    key_column: claim_id
+    freshness: {sla_seconds: 21600}
+    lineage: {upstreams: [identity_service, income_verification]}
+    duplicate_keys: [narrative_code, payout, bank_bsb]
+    columns:
+      claim_id: {type: string, criticality: 3, pattern: '^CL-\d{6}$'}
+      citizen_id: {type: string, criticality: 3, pattern: '^CZ-\d{6}$'}
+      postal_district: {type: string, criticality: 3, pattern: '^D-\d{2}$'}
+      payout: {type: number, criticality: 3, min: 0, max: 3500}
+      income_source: {type: string, criticality: 3, allowed: [payroll_actual, tax_office_actual, self_reported_verified]}
+      narrative_code: {type: string, criticality: 2, pattern: '^N\d{3}$'}
+      bank_bsb: {type: string, criticality: 2, pattern: '^\d{3}-\d{3}$'}
+    zero_tolerance:
+      - {column: income_source, rule: not_in_source, values: [averaged_annual]}
+    tools:
+      write:
+        approve_benefit:
+          args: {claim_id: '^CL-\d{6}$', postal_district: '^D-\d{2}$', payout: {type: number, min: 1}}
+          limits: {payout_max: 3500}
+          bind: {keys: [claim_id, postal_district], max: {payout: payout}}
+        raise_debt_notice:
+          args: {citizen_id: '^CZ-\d{6}$', amount: {type: number, min: 1}}
+          limits: {amount_max: 20000}
+          always_escrow: true
+    temporal:
+      - {name: one_payment_per_claim, tool: approve_benefit, type: once_per, by: [claim_id], window_seconds: 31536000}
+      - {name: district_daily_ceiling, tool: approve_benefit, type: sum_within, field: payout, by: [postal_district], window_seconds: 86400, max: 12000}
+
+data:
+  benefit_claims:
+    rows: 400
+    seed: 12
+    columns:
+      claim_id: {gen: seq, prefix: "CL-", digits: 6}
+      citizen_id: {gen: seq, prefix: "CZ-", digits: 6, start: 5000}
+      postal_district: {gen: choice, values: [D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08]}
+      payout: {gen: normal, mean: 2200, sd: 600, clip: [300, 3500], round: 0}
+      income_source: {gen: choice, values: [payroll_actual, tax_office_actual, self_reported_verified], weights: [50, 35, 15]}
+      narrative_code: {gen: choice, values: [N101, N102, N103, N104, N105, N106, N107, N108, N109, N110, N111, N112, N113, N114, N115, N116, N117, N118, N119, N120]}
+      bank_bsb: {gen: choice, values: [063-000, 062-001, 033-002, 082-003, 012-004, 064-005, 732-006, 484-007, 633-008, 182-009, 313-010, 814-011]}
+lineage: {identity_service: 1.0, income_verification: 1.0}
+
+steps:
+  - {name: "Claims data: Tier 1", do: evaluate, product: benefit_claims, expect: {tier: 1}}
+  - {name: "Token for the payments task", do: issue, as: t1, agent: benefits-agent, products: [benefit_claims], expect: {tier: 1, modes: {approve_benefit: direct, raise_debt_notice: escrow}}}
+  - {name: "Approve an eligible claim", do: call, token: t1, tool: approve_benefit, from_binding: {binding: 0}, expect: {decision: allowed}}
+  - {name: "District ceiling stops a burst of payouts in one district", do: call_until_denied, token: t1, tool: approve_benefit, binding_where: {postal_district: D-03}, expect: {code: TEMPORAL_VIOLATION, min_allowed: 2}}
+  - {name: "Debt notice always goes to two officers", do: call, token: t1, tool: raise_debt_notice, args: {citizen_id: CZ-005010, amount: 1800}, expect: {decision: escrow}}
+  - {name: "First officer approves", do: approve, approver: officer-1, expect: {status: pending}}
+  - {name: "Second officer rejects after checking actual income", do: reject, approver: officer-2, expect: {status: rejected}}
+  - {name: "A burst of 40 near-identical claims arrives", do: fault, fault: {type: duplicate_cluster, product: benefit_claims, template_row: 3, count: 40, id_column: claim_id, id_prefix: "CL-", id_start: 900000, vary: [citizen_id]}}
+  - {name: "Duplicate cluster detected", do: evaluate, product: benefit_claims, expect: {tier_in: [2, 3], vector_below: {poison: 0.6}}}
+  - {name: "Data reloaded without the burst", do: fault, fault: {type: regenerate, product: benefit_claims, rows: 400, seed: 121}}
+  - {name: "Some debts calculated from averaged annual income", do: fault, fault: {type: set_value, product: benefit_claims, fraction: 0.1, set: {income_source: averaged_annual}}}
+  - {name: "Averaged income is not an allowed source: Tier 3", do: evaluate, product: benefit_claims, expect: {tier: 3, reason_contains: "zero_tolerance:income_source"}}
+  - {name: "No debt or payment rights while the source is invalid", do: issue, as: t2, agent: benefits-agent, products: [benefit_claims], expect: {tier: 3, lacks_tools: [raise_debt_notice, approve_benefit]}}
+  - {name: "Baseline: without controls 40 debt notices are raised automatically", do: direct, tool: raise_debt_notice, args: {citizen_id: CZ-005011, amount: 1800}, repeat: 40}
+  - {name: "Audit chain verifies", do: audit_verify, expect: {valid: true}}

@@ -1,0 +1,79 @@
+{
+  "control": "https://<cene-control-url>",
+  "gateway": "https://<cene-gateway-url>",
+  "user": "<tester-google-account>",
+  "summary": {
+    "F": {
+      "PASS": 4,
+      "FAIL": 0,
+      "SKIP": 0
+    }
+  },
+  "checks": [
+    {
+      "id": "F3",
+      "expected": "cold-start lookup_invoice (gateway + tools from zero)",
+      "actual": "17014 ms, 200",
+      "status": "PASS",
+      "evidence": {
+        "http": 200,
+        "decision": "allowed",
+        "trace": "fe3d00eae9f02183c4f2ae041461322f",
+        "ms": 17013.6
+      },
+      "utc": "2026-11-07T21:33:00Z"
+    },
+    {
+      "id": "F1",
+      "expected": "100 warm lookups: p50/p95/p99 ms",
+      "actual": "{\"n\": 100, \"errors\": 0, \"p50\": 879.8, \"p95\": 1075.4, \"p99\": 1790.1, \"mean\": 891.5}",
+      "status": "PASS",
+      "evidence": {},
+      "utc": "2026-11-07T21:34:35Z"
+    },
+    {
+      "id": "F2",
+      "expected": "20 token issues: p50/p95 ms",
+      "actual": "{\"n\": 20, \"p50\": 3175.5, \"p95\": 4924.3, \"mean\": 3383.1}",
+      "status": "PASS",
+      "evidence": {},
+      "utc": "2026-11-07T21:35:42Z"
+    },
+    {
+      "id": "F4",
+      "expected": "BigQuery lookup alone: client and job ms",
+      "actual": "{\"n\": 20, \"client_p50\": 684.8, \"client_p95\": 10874.9, \"job_p50\": 197.0, \"job_p95\": 236.0}",
+      "status": "PASS",
+      "evidence": {},
+      "utc": "2026-11-07T21:36:12Z"
+    }
+  ],
+  "extra": {
+    "run_start": 1794087155.2115412,
+    "latency": {
+      "F3_cold_ms": 17013.6,
+      "F1": {
+        "n": 100,
+        "errors": 0,
+        "p50": 879.8,
+        "p95": 1075.4,
+        "p99": 1790.1,
+        "mean": 891.5
+      },
+      "F2": {
+        "n": 20,
+        "p50": 3175.5,
+        "p95": 4924.3,
+        "mean": 3383.1
+      },
+      "F4": {
+        "n": 20,
+        "client_p50": 684.8,
+        "client_p95": 10874.9,
+        "job_p50": 197.0,
+        "job_p95": 236.0
+      }
+    },
+    "run_end": 1794087372.4482243
+  }
+}

@@ -1,0 +1,453 @@
+{
+  "control": "https://<cene-control-url>",
+  "gateway": "https://<cene-gateway-url>",
+  "user": "<tester-google-account>",
+  "summary": {
+    "A": {
+      "PASS": 5,
+      "FAIL": 1,
+      "SKIP": 1
+    },
+    "B": {
+      "PASS": 14,
+      "FAIL": 0,
+      "SKIP": 0
+    },
+    "C": {
+      "PASS": 8,
+      "FAIL": 2,
+      "SKIP": 1
+    }
+  },
+  "checks": [
+    {
+      "id": "A1-c",
+      "expected": "200 {\"ok\":true,\"role\":\"control\"}",
+      "actual": "200 {\"ok\": true, \"role\": \"control\"}",
+      "status": "PASS",
+      "evidence": {
+        "http": 200,
+        "trace": "48085af9d0a1914954ed025b61f43c92",
+        "ms": 583.8
+      },
+      "utc": "2026-11-07T21:10:31Z"
+    },
+    {
+      "id": "A1-g",
+      "expected": "200 {\"ok\":true,\"role\":\"gateway\"}",
+      "actual": "200 {\"ok\": true, \"role\": \"gateway\"}",
+      "status": "PASS",
+      "evidence": {
+        "http": 200,
+        "trace": "09d543aa76f466a5d17c5220a65ed121",
+        "ms": 569.9
+      },
+      "utc": "2026-11-07T21:10:32Z"
+    },
+    {
+      "id": "A2-c",
+      "expected": "401/403 from Cloud Run (app not reached)",
+      "actual": "403 Cloud Run page",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "ms": 295.9
+      },
+      "utc": "2026-11-07T21:10:32Z"
+    },
+    {
+      "id": "A2-g",
+      "expected": "401/403 from Cloud Run (app not reached)",
+      "actual": "403 Cloud Run page",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "ms": 277.9
+      },
+      "utc": "2026-11-07T21:10:32Z"
+    },
+    {
+      "id": "A3",
+      "expected": "all three services on the same tag",
+      "actual": "{\"control\": \"v4\", \"gateway\": \"v4\", \"tools\": \"v4\"}",
+      "status": "PASS",
+      "evidence": {},
+      "utc": "2026-11-07T21:10:43Z"
+    },
+    {
+      "id": "A4",
+      "expected": "only gateway SA invokes tools; user gets 403",
+      "actual": "invokers=['serviceAccount:<cene-gateway-service-account>']; user call 200 (user project roles ['roles/owner'])",
+      "status": "FAIL",
+      "evidence": {
+        "user_project_roles": [
+          "roles/owner"
+        ],
+        "http": 200,
+        "trace": "facb6be8878816511241282d480b117c",
+        "ms": 1297.9
+      },
+      "utc": "2026-11-07T21:10:52Z"
+    },
+    {
+      "id": "A4b",
+      "expected": "non-owner identity (agent SA) calling tools gets 403",
+      "actual": "impersonation refused: //console.cloud.google.com/iam-admin/troubleshooter/summary;errorId=CiQwMWExYjdkOS05ZTg0LTc5OGItOGQ0ZC00MzZiYWMwZmI2NzkSAA%3D%3D\n  reason: IAM_PERMISSION_DENIED",
+      "status": "SKIP",
+      "evidence": {},
+      "utc": "2026-11-07T21:10:56Z"
+    },
+    {
+      "id": "B1",
+      "expected": "tier 1; fresh >= 0.9",
+      "actual": "tier 1; fresh 1.0; age 15s",
+      "status": "PASS",
+      "evidence": {
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "score": 1.0
+      },
+      "utc": "2026-11-07T21:11:21Z"
+    },
+    {
+      "id": "B2",
+      "expected": "tier 1; lookup/approve direct; token < 4 KB; Merkle bindings",
+      "actual": "tier 1; tools {'lookup_invoice': 'direct', 'approve_payment': 'direct'}; 1614 B; 278 bindings",
+      "status": "PASS",
+      "evidence": {
+        "token": "eyJhbGciOiJFUzI1NiIs...",
+        "jti": "53bfdf86e2ff49108569bb4af693d0f7",
+        "http": 200,
+        "trace": "35b951c0b64fe03d2bdb45c6d7a2fb39",
+        "ms": 3230.7
+      },
+      "utc": "2026-11-07T21:11:24Z"
+    },
+    {
+      "id": "B3",
+      "expected": "200; row with JSON types (amount number, nulls null)",
+      "actual": "200; amount float; string-nulls []",
+      "status": "PASS",
+      "evidence": {
+        "row": {
+          "invoice_id": "INV-000001",
+          "vendor_id": "V-004",
+          "account_id": "ACC-1004",
+          "amount": 7008.08,
+          "discount_pct": 1.73,
+          "currency": "AUD",
+          "status": "open",
+          "vendor_notes": "Thanks for your business."
+        },
+        "http": 200,
+        "decision": "allowed",
+        "trace": "15c1695153814f8e5db5a6fd8dc74500",
+        "ms": 4189.4
+      },
+      "utc": "2026-11-07T21:11:28Z"
+    },
+    {
+      "id": "B4",
+      "expected": "200 allowed",
+      "actual": "200 allowed",
+      "status": "PASS",
+      "evidence": {
+        "invoice": "INV-000019",
+        "http": 200,
+        "decision": "allowed",
+        "trace": "7b129fc0177675ae5db5a6fd8dc74af2",
+        "ms": 374.0
+      },
+      "utc": "2026-11-07T21:11:29Z"
+    },
+    {
+      "id": "B5",
+      "expected": "403 TEMPORAL_VIOLATION",
+      "actual": "403 TEMPORAL_VIOLATION",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "d9b253874b995dd65db5a6fd8dc74adb",
+        "ms": 78.0
+      },
+      "utc": "2026-11-07T21:11:29Z"
+    },
+    {
+      "id": "B6",
+      "expected": "403 BINDING_VIOLATION",
+      "actual": "403 BINDING_VIOLATION",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "13a01607c5688cf45db5a6fd8dc74144",
+        "ms": 82.5
+      },
+      "utc": "2026-11-07T21:11:29Z"
+    },
+    {
+      "id": "B7",
+      "expected": "403 BINDING_VIOLATION",
+      "actual": "403 BINDING_VIOLATION",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "78812e7a538879c25db5a6fd8dc74b0c",
+        "ms": 81.8
+      },
+      "utc": "2026-11-07T21:11:29Z"
+    },
+    {
+      "id": "B8",
+      "expected": "403 (BINDING_VIOLATION or ARG_OUT_OF_BOUNDS)",
+      "actual": "403 BINDING_VIOLATION",
+      "status": "PASS",
+      "evidence": {
+        "bound": {
+          "amount": 1808.78
+        },
+        "http": 403,
+        "decision": "denied",
+        "trace": "52e7615dddcbe5a65db5a6fd8dc744d4",
+        "ms": 82.2
+      },
+      "utc": "2026-11-07T21:11:29Z"
+    },
+    {
+      "id": "B9",
+      "expected": "403 TOOL_NOT_ALLOWED",
+      "actual": "403 TOOL_NOT_ALLOWED",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "ce5124b9b24f35bf5db5a6fd8dc7490e",
+        "ms": 86.2
+      },
+      "utc": "2026-11-07T21:11:29Z"
+    },
+    {
+      "id": "B10",
+      "expected": "200 then 403 REPLAY",
+      "actual": "200 then 403 REPLAY",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "8e0e7f77c52e77e35db5a6fd8dc74da0",
+        "ms": 87.5
+      },
+      "utc": "2026-11-07T21:11:30Z"
+    },
+    {
+      "id": "B11",
+      "expected": "403 TOKEN_MISSING",
+      "actual": "403 TOKEN_MISSING",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "35390e5e55f16a305db5a6fd8dc74fab",
+        "ms": 69.8
+      },
+      "utc": "2026-11-07T21:11:30Z"
+    },
+    {
+      "id": "B12",
+      "expected": "403 TOKEN_BAD_SIGNATURE",
+      "actual": "403 TOKEN_BAD_SIGNATURE",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "2cf4b932d247db865db5a6fd8dc7443a",
+        "ms": 66.3
+      },
+      "utc": "2026-11-07T21:11:30Z"
+    },
+    {
+      "id": "B13",
+      "expected": "403 TOKEN_BAD_SIGNATURE",
+      "actual": "403 TOKEN_BAD_SIGNATURE",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "275d96e9891d1a5e5db5a6fd8dc7456a",
+        "ms": 74.9
+      },
+      "utc": "2026-11-07T21:11:30Z"
+    },
+    {
+      "id": "B14",
+      "expected": "exactly 1 allowed approve_payment in gateway audit",
+      "actual": "1",
+      "status": "PASS",
+      "evidence": {
+        "jti": "53bfdf86e2ff49108569bb4af693d0f7"
+      },
+      "utc": "2026-11-07T21:11:36Z"
+    },
+    {
+      "id": "C1",
+      "expected": "tier 2; fresh < 0.9; reason mentions freshness",
+      "actual": "tier 2; fresh 0.706; reasons ['fresh=0.71<0.9']",
+      "status": "PASS",
+      "evidence": {
+        "vectors": {
+          "fresh": 0.706,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "score": 0.7383
+      },
+      "utc": "2026-11-07T21:11:55Z"
+    },
+    {
+      "id": "C2",
+      "expected": "tier 2; approve_payment escrow",
+      "actual": "tier 2; approve_payment escrow",
+      "status": "PASS",
+      "evidence": {
+        "token": "eyJhbGciOiJFUzI1NiIs...",
+        "http": 200,
+        "trace": "70df78375f3a75820d7cc10cc57b01fb",
+        "ms": 3238.9
+      },
+      "utc": "2026-11-07T21:11:59Z"
+    },
+    {
+      "id": "C3",
+      "expected": "200 decision escrow, escrow id",
+      "actual": "200 escrow id=8ffa68804585",
+      "status": "PASS",
+      "evidence": {
+        "invoice": "INV-000358",
+        "http": 200,
+        "decision": "escrow",
+        "trace": "5e24c7953489f7ff0934e40639e0ab89",
+        "ms": 134.4
+      },
+      "utc": "2026-11-07T21:11:59Z"
+    },
+    {
+      "id": "C4",
+      "expected": "item listed as pending",
+      "actual": "200; listed=True",
+      "status": "PASS",
+      "evidence": {
+        "http": 200,
+        "trace": "f2a4fc08fff1954c0934e40639e0ad33",
+        "ms": 39.5
+      },
+      "utc": "2026-11-07T21:11:59Z"
+    },
+    {
+      "id": "C5",
+      "expected": "approver 1 -> status pending",
+      "actual": "200 {'status': 'pending', 'approvals': 1, 'required': 2}",
+      "status": "PASS",
+      "evidence": {
+        "http": 200,
+        "trace": "91d229f0cb3967f70934e40639e0a359",
+        "ms": 88.7
+      },
+      "utc": "2026-11-07T21:11:59Z"
+    },
+    {
+      "id": "C6",
+      "expected": "409 DUPLICATE_APPROVER",
+      "actual": "409 DUPLICATE_APPROVER",
+      "status": "PASS",
+      "evidence": {
+        "http": 409,
+        "trace": "da290f5844cd02160934e40639e0a373",
+        "ms": 25.9
+      },
+      "utc": "2026-11-07T21:11:59Z"
+    },
+    {
+      "id": "C7",
+      "expected": "approver 2 -> executed",
+      "actual": "impersonation refused: cessToken\n    troubleshooter_url: https://console.cloud.google.com/iam-admin/troubleshooter/summary;errorId=CiQwMWExYjdkYS1hMzYwLTcyNGQtODE1Mi03MWM2NzRjYzlkNGYSAA%3D%3D\n  reason: IAM_PERMISSION_DENIED",
+      "status": "FAIL",
+      "evidence": {},
+      "utc": "2026-11-07T21:12:02Z"
+    },
+    {
+      "id": "C8",
+      "expected": "409 ESCROW_CLOSED",
+      "actual": "skipped: no second approver",
+      "status": "SKIP",
+      "evidence": {},
+      "utc": "2026-11-07T21:12:02Z"
+    },
+    {
+      "id": "C9",
+      "expected": "APPROVER_UNKNOWN or 401/403",
+      "actual": "403 Cloud Run",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "ms": 287.3
+      },
+      "utc": "2026-11-07T21:12:03Z"
+    },
+    {
+      "id": "C10",
+      "expected": "requester's own approval refused (SELF_APPROVAL)",
+      "actual": "200 pending",
+      "status": "FAIL",
+      "evidence": {
+        "requester": "<tester-google-account>",
+        "agent_id": "ap-agent",
+        "escrow_id": "2f145ca6a40e",
+        "http": 200,
+        "trace": "ef17622590a98f5d0934e40639e0a660",
+        "ms": 76.7
+      },
+      "utc": "2026-11-07T21:12:03Z"
+    },
+    {
+      "id": "C11",
+      "expected": "tier 1 after healthy reload",
+      "actual": "tier 1",
+      "status": "PASS",
+      "evidence": {
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        }
+      },
+      "utc": "2026-11-07T21:12:27Z"
+    }
+  ],
+  "extra": {
+    "run_start": 1794085828.234069,
+    "images": {
+      "control": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v4",
+      "gateway": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v4",
+      "tools": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v4"
+    },
+    "B_jti": "53bfdf86e2ff49108569bb4af693d0f7",
+    "C_jti": "ead2deeb802c48ac87b9224e13f40f9d",
+    "C_end": 1794085923.384038,
+    "run_end": 1794085947.6379676
+  }
+}

@@ -1,0 +1,28 @@
+{
+ "stack": "transformers",
+ "transformers": "5.22.2",
+ "torch": "2.11.0+cu130",
+ "cuda_devices": [
+  "Tesla T4",
+  "Tesla T4"
+ ],
+ "dtype": "float16",
+ "attn_implementation": "sdpa",
+ "max_memory_gib": 14.0,
+ "max_new_tokens": 1024,
+ "path": "/kaggle/input/models/google/gemma-4/transformers/gemma-4-12b-it/2",
+ "name": "gemma-4-12b-it",
+ "chat_template_sha256": "36e3a42e5cf14cd0020e72d92e1fdd9970f59b82170e421f0cbe1bb42bead3f0",
+ "chat_template_mentions_enable_thinking": true,
+ "thinking": "off: enable_thinking=False passed to the template; the thinking channel is also stripped from every reply",
+ "response_template_source": "transformers.cli.serving.utils",
+ "text_only_missing_keys": [],
+ "text_only_result": "ok",
+ "model_class": "Gemma4UnifiedForCausalLM",
+ "text_only": true,
+ "device_map": [
+  "0",
+  "1"
+ ],
+ "load_seconds": 54.7
+}

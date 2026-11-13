@@ -1,0 +1,104 @@
+{
+  "control": "https://<cene-control-url>",
+  "gateway": "https://<cene-gateway-url>",
+  "user": "<tester-google-account>",
+  "summary": {
+    "A": {
+      "PASS": 6,
+      "FAIL": 1,
+      "SKIP": 0
+    }
+  },
+  "checks": [
+    {
+      "id": "A1-c",
+      "expected": "200 {\"ok\":true,\"role\":\"control\"}",
+      "actual": "200 {\"ok\": true, \"role\": \"control\"}",
+      "status": "PASS",
+      "evidence": {
+        "http": 200,
+        "trace": "f314e12fe8b0afa79e48f28980d2351d",
+        "ms": 611.8
+      },
+      "utc": "2026-11-07T21:52:40Z"
+    },
+    {
+      "id": "A1-g",
+      "expected": "200 {\"ok\":true,\"role\":\"gateway\"}",
+      "actual": "200 {\"ok\": true, \"role\": \"gateway\"}",
+      "status": "PASS",
+      "evidence": {
+        "http": 200,
+        "trace": "50a4cd2d16c8f917f8e229ff131bd395",
+        "ms": 598.4
+      },
+      "utc": "2026-11-07T21:52:41Z"
+    },
+    {
+      "id": "A2-c",
+      "expected": "401/403 from Cloud Run (app not reached)",
+      "actual": "403 Cloud Run page",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "ms": 342.0
+      },
+      "utc": "2026-11-07T21:52:41Z"
+    },
+    {
+      "id": "A2-g",
+      "expected": "401/403 from Cloud Run (app not reached)",
+      "actual": "403 Cloud Run page",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "ms": 306.6
+      },
+      "utc": "2026-11-07T21:52:41Z"
+    },
+    {
+      "id": "A3",
+      "expected": "all three services on the same tag",
+      "actual": "{\"control\": \"v5\", \"gateway\": \"v5\", \"tools\": \"v5\"}",
+      "status": "PASS",
+      "evidence": {},
+      "utc": "2026-11-07T21:52:53Z"
+    },
+    {
+      "id": "A4",
+      "expected": "only gateway SA invokes tools; user gets 403",
+      "actual": "invokers=['serviceAccount:<cene-gateway-service-account>']; user call 200 (user project roles ['roles/owner'])",
+      "status": "FAIL",
+      "evidence": {
+        "user_project_roles": [
+          "roles/owner"
+        ],
+        "http": 200,
+        "trace": "5cb56015902a357672dc5604e1e72097",
+        "ms": 1727.8
+      },
+      "utc": "2026-11-07T21:53:03Z"
+    },
+    {
+      "id": "A4b",
+      "expected": "non-owner identity (agent SA) calling tools gets 403",
+      "actual": "403",
+      "status": "PASS",
+      "evidence": {
+        "caller": "<cene-agent-service-account>",
+        "http": 403,
+        "ms": 30.3
+      },
+      "utc": "2026-11-07T21:53:07Z"
+    }
+  ],
+  "extra": {
+    "run_start": 1794088357.0956204,
+    "images": {
+      "control": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v5",
+      "gateway": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v5",
+      "tools": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v5"
+    },
+    "run_end": 1794088387.8515077
+  }
+}

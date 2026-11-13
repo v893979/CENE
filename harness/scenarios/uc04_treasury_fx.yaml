@@ -1,0 +1,62 @@
+id: uc04
+title: Treasury liquidity and cross-border FX
+book_ref: "Field guide, Chapter 4, Use Case 4"
+summary: >
+  A treasury agent moves money on live FX rates. Failures replicated: many individually-valid
+  transfers that together exceed a safe hourly total; a rate feed that keeps answering but has
+  frozen (every tick identical); and a feed whose last load is minutes old. Fixes: a rolling
+  hourly sum ceiling, flat-line detection in the drift check, freshness tied to load-commit time,
+  and token lifetimes bounded by the freshness SLA (here about two minutes).
+seed: 14
+
+contracts:
+  - product: fx_ticks
+    owner: markets-data
+    key_column: tick_id
+    freshness: {sla_seconds: 120}
+    lineage: {upstreams: [market_data_vendor]}
+    columns:
+      tick_id: {type: string, criticality: 3, pattern: '^T-\d{7}$'}
+      pair: {type: string, criticality: 3, allowed: [AUDUSD, AUDEUR, AUDJPY]}
+      rate: {type: number, criticality: 3, min: 0.0001, max: 500}
+      spread: {type: number, criticality: 2, min: 0, max: 0.01}
+      volume: {type: number, criticality: 1, min: 0}
+    tools:
+      write:
+        execute_fx_transfer:
+          args: {pair: {enum: [AUDUSD, AUDEUR, AUDJPY]}, amount: {type: number, min: 1000}, account_id: '^TRS-\d{3}$'}
+          limits: {amount_max: 10000000}
+    temporal:
+      - {name: hourly_transfer_ceiling, tool: execute_fx_transfer, type: sum_within, field: amount, by: [agent], window_seconds: 3600, max: 25000000}
+
+data:
+  fx_ticks:
+    rows: 500
+    seed: 4
+    load_age_seconds: 5
+    columns:
+      tick_id: {gen: seq, prefix: "T-", digits: 7}
+      pair: {gen: const, value: AUDUSD}
+      rate: {gen: normal, mean: 0.66, sd: 0.004, round: 5}
+      spread: {gen: normal, mean: 0.0002, sd: 0.00005, clip: [0.00001, 0.001], round: 6}
+      volume: {gen: lognormal, mean: 13, sigma: 1}
+lineage: {market_data_vendor: 1.0}
+
+steps:
+  - {name: "Live rates: Tier 1", do: evaluate, product: fx_ticks, expect: {tier: 1}}
+  - {name: "Token lifetime is bounded by the 2-minute freshness SLA", do: issue, as: t1, agent: treasury-agent, products: [fx_ticks], expect: {tier: 1, ttl_below: 140}}
+  - {name: "Transfer 1 of 5M", do: call, token: t1, tool: execute_fx_transfer, args: {pair: AUDUSD, amount: 5000000, account_id: TRS-001}, expect: {decision: allowed}}
+  - {name: "Transfer 2 of 5M", do: call, token: t1, tool: execute_fx_transfer, args: {pair: AUDUSD, amount: 5000000, account_id: TRS-002}, expect: {decision: allowed}}
+  - {name: "Transfer 3 of 5M", do: call, token: t1, tool: execute_fx_transfer, args: {pair: AUDUSD, amount: 5000000, account_id: TRS-003}, expect: {decision: allowed}}
+  - {name: "Transfer 4 of 5M", do: call, token: t1, tool: execute_fx_transfer, args: {pair: AUDUSD, amount: 5000000, account_id: TRS-004}, expect: {decision: allowed}}
+  - {name: "Transfer 5 of 5M (reaches 25M)", do: call, token: t1, tool: execute_fx_transfer, args: {pair: AUDUSD, amount: 5000000, account_id: TRS-005}, expect: {decision: allowed}}
+  - {name: "Transfer 6 would exceed the hourly ceiling", do: call, token: t1, tool: execute_fx_transfer, args: {pair: AUDUSD, amount: 5000000, account_id: TRS-006}, expect: {decision: denied, code: TEMPORAL_VIOLATION}}
+  - {name: "Single transfer above the per-call limit", do: call, token: t1, tool: execute_fx_transfer, args: {pair: AUDUSD, amount: 20000000, account_id: TRS-001}, expect: {decision: denied, code: ARG_OUT_OF_BOUNDS}}
+  - {name: "Baseline: without controls all six transfers execute", do: direct, tool: execute_fx_transfer, args: {pair: AUDUSD, amount: 5000000, account_id: TRS-001}, repeat: 6}
+  - {name: "3 minutes later the old token has expired", do: advance, seconds: 180}
+  - {name: "Expired token refused", do: call, token: t1, tool: execute_fx_transfer, args: {pair: AUDUSD, amount: 1000, account_id: TRS-001}, expect: {decision: denied, code: TOKEN_EXPIRED}}
+  - {name: "Feed has not loaded for 3 minutes (SLA 2 min): below Tier 1", do: evaluate, product: fx_ticks, expect: {tier_in: [2, 3], vector_below: {fresh: 0.9}}}
+  - {name: "Feed reconnects but replays one frozen tick (all rates identical)", do: fault, fault: {type: flatline, product: fx_ticks, column: rate}}
+  - {name: "Mark the frozen feed as freshly loaded (the API still answers)", do: fault, fault: {type: reload, product: fx_ticks}}
+  - {name: "Flat-lined rate detected: Tier 3 despite fresh load time", do: evaluate, product: fx_ticks, expect: {tier: 3, vector_below: {drift: 0.5}}}
+  - {name: "Audit chain verifies", do: audit_verify, expect: {valid: true}}

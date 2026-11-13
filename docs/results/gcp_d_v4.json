@@ -1,0 +1,1151 @@
+{
+  "control": "https://<cene-control-url>",
+  "gateway": "https://<cene-gateway-url>",
+  "user": "<tester-google-account>",
+  "summary": {
+    "D": {
+      "PASS": 25,
+      "FAIL": 1,
+      "SKIP": 0
+    }
+  },
+  "checks": [
+    {
+      "id": "D01h",
+      "expected": "uc01 ap_invoices healthy tier 1",
+      "actual": "tier 1 (age 18.2s, load took 22.9s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 1.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 18.2
+      },
+      "utc": "2026-11-07T21:13:37Z"
+    },
+    {
+      "id": "D01f",
+      "expected": "uc01 stale -> tier 2",
+      "actual": "tier 2 (age 5413.3s) ['fresh=0.71<0.9']",
+      "status": "PASS",
+      "evidence": {
+        "fault": {
+          "type": "stale",
+          "product": "ap_invoices",
+          "age_seconds": 5400
+        },
+        "tier": 2,
+        "score": 0.7375,
+        "vectors": {
+          "fresh": 0.7053,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "fresh=0.71<0.9"
+        ],
+        "age_s": 5413.3
+      },
+      "utc": "2026-11-07T21:14:02Z"
+    },
+    {
+      "id": "D02h",
+      "expected": "uc02 contractor_invoices healthy tier 1",
+      "actual": "tier 1 (age 16.4s, load took 24.7s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 1.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 16.4
+      },
+      "utc": "2026-11-07T21:14:51Z"
+    },
+    {
+      "id": "D02f",
+      "expected": "uc02 regenerate -> tier 3",
+      "actual": "tier 3 (age 9.2s) ['drift=0.00<0.5', 'poison=0.00<0.6']",
+      "status": "PASS",
+      "evidence": {
+        "fault": {
+          "type": "regenerate",
+          "product": "contractor_invoices",
+          "profile": "stress",
+          "rows": 300,
+          "seed": 21,
+          "start": 1000
+        },
+        "tier": 3,
+        "score": 0.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 0.0,
+          "poison": 0.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "drift=0.00<0.5",
+          "poison=0.00<0.6"
+        ],
+        "age_s": 9.2
+      },
+      "utc": "2026-11-07T21:15:11Z"
+    },
+    {
+      "id": "D03h",
+      "expected": "uc02 contractor_invoices healthy tier 1",
+      "actual": "tier 1 (age 16.2s, load took 24.0s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 1.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 16.2
+      },
+      "utc": "2026-11-07T21:16:03Z"
+    },
+    {
+      "id": "D03f",
+      "expected": "uc02 duplicate_cluster -> tier 3",
+      "actual": "tier 3 (age 6.8s) ['poison=0.00<0.6']",
+      "status": "PASS",
+      "evidence": {
+        "fault": {
+          "type": "duplicate_cluster",
+          "product": "contractor_invoices",
+          "template_row": 1,
+          "count": 30,
+          "id_column": "invoice_id",
+          "id_prefix": "CI-",
+          "id_start": 910000
+        },
+        "tier": 3,
+        "score": 0.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 0.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "poison=0.00<0.6"
+        ],
+        "age_s": 6.8
+      },
+      "utc": "2026-11-07T21:16:21Z"
+    },
+    {
+      "id": "D04h",
+      "expected": "uc03 lab_results healthy tier 1",
+      "actual": "tier 1 (age 14.0s, load took 22.7s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 0.9937,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 0.9684,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 14.0
+      },
+      "utc": "2026-11-07T21:17:11Z"
+    },
+    {
+      "id": "D04f",
+      "expected": "uc03 scale_column -> tier 3",
+      "actual": "tier 3 (age 7.2s) ['drift=0.00<0.5', 'poison=0.00<0.6', 'zero_tolerance:creatinine_unit:equals']",
+      "status": "PASS",
+      "evidence": {
+        "fault": {
+          "type": "scale_column",
+          "product": "lab_results",
+          "column": "creatinine",
+          "factor": 88.4,
+          "fraction": 0.3,
+          "set": {
+            "creatinine_unit": "umol/L"
+          }
+        },
+        "tier": 3,
+        "score": 0.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 0.9684,
+          "drift": 0.0,
+          "poison": 0.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "drift=0.00<0.5",
+          "poison=0.00<0.6",
+          "zero_tolerance:creatinine_unit:equals"
+        ],
+        "age_s": 7.2
+      },
+      "utc": "2026-11-07T21:17:30Z"
+    },
+    {
+      "id": "D05h",
+      "expected": "uc04 fx_ticks healthy tier 1",
+      "actual": "tier 1 (age 12.8s, load took 20.2s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 0.992,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 0.96,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 12.8
+      },
+      "utc": "2026-11-07T21:18:12Z"
+    },
+    {
+      "id": "D05f",
+      "expected": "uc04 wait 280s past SLA -> tier 3",
+      "actual": "tier 3 (age 295.8s) ['fresh=0.36<0.9']",
+      "status": "PASS",
+      "evidence": {
+        "fault": null,
+        "tier": 3,
+        "score": 0.348,
+        "vectors": {
+          "fresh": 0.3623,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 0.96,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "fresh=0.36<0.9"
+        ],
+        "age_s": 295.8
+      },
+      "utc": "2026-11-07T21:22:57Z"
+    },
+    {
+      "id": "D06h",
+      "expected": "uc05 vendor_bids healthy tier 1",
+      "actual": "tier 1 (age 15.8s, load took 23.5s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 1.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 15.8
+      },
+      "utc": "2026-11-07T21:23:25Z"
+    },
+    {
+      "id": "D06f",
+      "expected": "uc05 lineage -> tier 2",
+      "actual": "tier 2 (age 32.8s) ['lin=0.55<0.6']",
+      "status": "PASS",
+      "evidence": {
+        "fault": {
+          "type": "lineage",
+          "node": "approved_spec_repo",
+          "health": 0.55
+        },
+        "tier": 2,
+        "score": 0.8342,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 0.55,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "lin=0.55<0.6"
+        ],
+        "age_s": 32.8
+      },
+      "utc": "2026-11-07T21:23:40Z"
+    },
+    {
+      "id": "D07h",
+      "expected": "uc06 orders healthy tier 1",
+      "actual": "tier 1 (age 12.1s, load took 20.2s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 0.9575,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 0.9875,
+          "drift": 1.0,
+          "poison": 0.8,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 12.1
+      },
+      "utc": "2026-11-07T21:24:24Z"
+    },
+    {
+      "id": "D07f",
+      "expected": "uc06 no fault -> tier 1",
+      "actual": "tier 1 (age 14.4s) []",
+      "status": "PASS",
+      "evidence": {
+        "fault": null,
+        "tier": 1,
+        "score": 0.9575,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 0.9875,
+          "drift": 1.0,
+          "poison": 0.8,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 14.4
+      },
+      "utc": "2026-11-07T21:24:26Z"
+    },
+    {
+      "id": "D08h",
+      "expected": "uc07 credit_applications healthy tier 1",
+      "actual": "tier 1 (age 13.9s, load took 21.4s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 1.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 13.9
+      },
+      "utc": "2026-11-07T21:24:51Z"
+    },
+    {
+      "id": "D08f",
+      "expected": "uc07 set_value -> tier 3",
+      "actual": "tier 3 (age 6.5s) ['zero_tolerance:bureau_age_days:max']",
+      "status": "PASS",
+      "evidence": {
+        "fault": {
+          "type": "set_value",
+          "product": "credit_applications",
+          "where": {
+            "app_id": "LA-00030"
+          },
+          "set": {
+            "bureau_age_days": 45
+          }
+        },
+        "tier": 3,
+        "score": 0.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "zero_tolerance:bureau_age_days:max"
+        ],
+        "age_s": 6.5
+      },
+      "utc": "2026-11-07T21:25:07Z"
+    },
+    {
+      "id": "D09h",
+      "expected": "uc08 adverse_events healthy tier 1",
+      "actual": "tier 1 (age 14.7s, load took 22.3s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 0.992,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 0.96,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 14.7
+      },
+      "utc": "2026-11-07T21:25:54Z"
+    },
+    {
+      "id": "D09f",
+      "expected": "uc08 null_spike -> tier 3",
+      "actual": "tier 3 (age 7.3s) ['zero_tolerance:severity_code:not_null']",
+      "status": "PASS",
+      "evidence": {
+        "fault": {
+          "type": "null_spike",
+          "product": "adverse_events",
+          "column": "severity_code",
+          "fraction": 0.05
+        },
+        "tier": 3,
+        "score": 0.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 0.9863,
+          "drift": 1.0,
+          "poison": 0.96,
+          "comp_crit": 0.936
+        },
+        "reasons": [
+          "zero_tolerance:severity_code:not_null"
+        ],
+        "age_s": 7.3
+      },
+      "utc": "2026-11-07T21:26:11Z"
+    },
+    {
+      "id": "D10h",
+      "expected": "uc08 adverse_events healthy tier 1",
+      "actual": "tier 1 (age 14.1s, load took 22.0s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 0.992,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 0.96,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 14.1
+      },
+      "utc": "2026-11-07T21:26:55Z"
+    },
+    {
+      "id": "D10f",
+      "expected": "uc08 lineage -> tier 3",
+      "actual": "tier 3 (age 28.0s) ['lin=0.00<0.6']",
+      "status": "PASS",
+      "evidence": {
+        "fault": {
+          "type": "lineage",
+          "node": "cro_pipeline_v4",
+          "health": 0.0
+        },
+        "tier": 3,
+        "score": 0.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 0.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 0.96,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "lin=0.00<0.6"
+        ],
+        "age_s": 28.0
+      },
+      "utc": "2026-11-07T21:27:09Z"
+    },
+    {
+      "id": "D11h",
+      "expected": "uc09 scada_telemetry healthy tier 1",
+      "actual": "tier 3 (age 14.8s, load took 21.6s) ['fresh=0.26<0.9']",
+      "status": "FAIL",
+      "evidence": {
+        "tier": 3,
+        "score": 0.2434,
+        "vectors": {
+          "fresh": 0.2573,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "fresh=0.26<0.9"
+        ],
+        "age_s": 14.8
+      },
+      "utc": "2026-11-07T21:27:56Z"
+    },
+    {
+      "id": "D11f",
+      "expected": "uc09 wait 15s past SLA -> tier 3",
+      "actual": "tier 3 (age 33.2s) ['fresh=0.02<0.9']",
+      "status": "PASS",
+      "evidence": {
+        "fault": null,
+        "tier": 3,
+        "score": 0.0178,
+        "vectors": {
+          "fresh": 0.0199,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "fresh=0.02<0.9"
+        ],
+        "age_s": 33.2
+      },
+      "utc": "2026-11-07T21:28:14Z"
+    },
+    {
+      "id": "D12h",
+      "expected": "uc11 engine_telemetry healthy tier 1",
+      "actual": "tier 1 (age 15.1s, load took 22.1s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 1.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 15.1
+      },
+      "utc": "2026-11-07T21:28:39Z"
+    },
+    {
+      "id": "D12f",
+      "expected": "uc11 set_value -> tier 3",
+      "actual": "tier 3 (age 6.8s) ['drift=0.21<0.5', 'poison=0.00<0.6', 'zero_tolerance:vibration_ips:min']",
+      "status": "PASS",
+      "evidence": {
+        "fault": {
+          "type": "set_value",
+          "product": "engine_telemetry",
+          "where": {
+            "tail_number": "VH-QPA"
+          },
+          "set": {
+            "vibration_ips": 0.0
+          }
+        },
+        "tier": 3,
+        "score": 0.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 0.2075,
+          "poison": 0.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "drift=0.21<0.5",
+          "poison=0.00<0.6",
+          "zero_tolerance:vibration_ips:min"
+        ],
+        "age_s": 6.8
+      },
+      "utc": "2026-11-07T21:28:55Z"
+    },
+    {
+      "id": "D13h",
+      "expected": "uc12 benefit_claims healthy tier 1",
+      "actual": "tier 1 (age 14.4s, load took 21.8s) []",
+      "status": "PASS",
+      "evidence": {
+        "tier": 1,
+        "score": 1.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "age_s": 14.4
+      },
+      "utc": "2026-11-07T21:29:42Z"
+    },
+    {
+      "id": "D13f",
+      "expected": "uc12 set_value -> tier 3",
+      "actual": "tier 3 (age 6.1s) ['poison=0.00<0.6', 'zero_tolerance:income_source:not_in_source']",
+      "status": "PASS",
+      "evidence": {
+        "fault": {
+          "type": "set_value",
+          "product": "benefit_claims",
+          "fraction": 0.1,
+          "set": {
+            "income_source": "averaged_annual"
+          }
+        },
+        "tier": 3,
+        "score": 0.0,
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 0.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "poison=0.00<0.6",
+          "zero_tolerance:income_source:not_in_source"
+        ],
+        "age_s": 6.1
+      },
+      "utc": "2026-11-07T21:29:59Z"
+    }
+  ],
+  "extra": {
+    "run_start": 1794085986.2511766,
+    "phase_d": [
+      {
+        "id": "D01",
+        "uc": "uc01",
+        "product": "ap_invoices",
+        "healthy": {
+          "tier": 1,
+          "score": 1.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 18.2
+        },
+        "after": {
+          "tier": 2,
+          "score": 0.7375,
+          "vectors": {
+            "fresh": 0.7053,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "fresh=0.71<0.9"
+          ],
+          "age_s": 5413.3
+        },
+        "expected": 2
+      },
+      {
+        "id": "D02",
+        "uc": "uc02",
+        "product": "contractor_invoices",
+        "healthy": {
+          "tier": 1,
+          "score": 1.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 16.4
+        },
+        "after": {
+          "tier": 3,
+          "score": 0.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 0.0,
+            "poison": 0.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "drift=0.00<0.5",
+            "poison=0.00<0.6"
+          ],
+          "age_s": 9.2
+        },
+        "expected": 3
+      },
+      {
+        "id": "D03",
+        "uc": "uc02",
+        "product": "contractor_invoices",
+        "healthy": {
+          "tier": 1,
+          "score": 1.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 16.2
+        },
+        "after": {
+          "tier": 3,
+          "score": 0.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 0.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "poison=0.00<0.6"
+          ],
+          "age_s": 6.8
+        },
+        "expected": 3
+      },
+      {
+        "id": "D04",
+        "uc": "uc03",
+        "product": "lab_results",
+        "healthy": {
+          "tier": 1,
+          "score": 0.9937,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 0.9684,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 14.0
+        },
+        "after": {
+          "tier": 3,
+          "score": 0.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 0.9684,
+            "drift": 0.0,
+            "poison": 0.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "drift=0.00<0.5",
+            "poison=0.00<0.6",
+            "zero_tolerance:creatinine_unit:equals"
+          ],
+          "age_s": 7.2
+        },
+        "expected": 3
+      },
+      {
+        "id": "D05",
+        "uc": "uc04",
+        "product": "fx_ticks",
+        "healthy": {
+          "tier": 1,
+          "score": 0.992,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 0.96,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 12.8
+        },
+        "after": {
+          "tier": 3,
+          "score": 0.348,
+          "vectors": {
+            "fresh": 0.3623,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 0.96,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "fresh=0.36<0.9"
+          ],
+          "age_s": 295.8
+        },
+        "expected": 3
+      },
+      {
+        "id": "D06",
+        "uc": "uc05",
+        "product": "vendor_bids",
+        "healthy": {
+          "tier": 1,
+          "score": 1.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 15.8
+        },
+        "after": {
+          "tier": 2,
+          "score": 0.8342,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 0.55,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "lin=0.55<0.6"
+          ],
+          "age_s": 32.8
+        },
+        "expected": 2
+      },
+      {
+        "id": "D07",
+        "uc": "uc06",
+        "product": "orders",
+        "healthy": {
+          "tier": 1,
+          "score": 0.9575,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 0.9875,
+            "drift": 1.0,
+            "poison": 0.8,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 12.1
+        },
+        "after": {
+          "tier": 1,
+          "score": 0.9575,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 0.9875,
+            "drift": 1.0,
+            "poison": 0.8,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 14.4
+        },
+        "expected": 1
+      },
+      {
+        "id": "D08",
+        "uc": "uc07",
+        "product": "credit_applications",
+        "healthy": {
+          "tier": 1,
+          "score": 1.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 13.9
+        },
+        "after": {
+          "tier": 3,
+          "score": 0.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "zero_tolerance:bureau_age_days:max"
+          ],
+          "age_s": 6.5
+        },
+        "expected": 3
+      },
+      {
+        "id": "D09",
+        "uc": "uc08",
+        "product": "adverse_events",
+        "healthy": {
+          "tier": 1,
+          "score": 0.992,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 0.96,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 14.7
+        },
+        "after": {
+          "tier": 3,
+          "score": 0.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 0.9863,
+            "drift": 1.0,
+            "poison": 0.96,
+            "comp_crit": 0.936
+          },
+          "reasons": [
+            "zero_tolerance:severity_code:not_null"
+          ],
+          "age_s": 7.3
+        },
+        "expected": 3
+      },
+      {
+        "id": "D10",
+        "uc": "uc08",
+        "product": "adverse_events",
+        "healthy": {
+          "tier": 1,
+          "score": 0.992,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 0.96,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 14.1
+        },
+        "after": {
+          "tier": 3,
+          "score": 0.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 0.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 0.96,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "lin=0.00<0.6"
+          ],
+          "age_s": 28.0
+        },
+        "expected": 3
+      },
+      {
+        "id": "D11",
+        "uc": "uc09",
+        "product": "scada_telemetry",
+        "healthy": {
+          "tier": 3,
+          "score": 0.2434,
+          "vectors": {
+            "fresh": 0.2573,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "fresh=0.26<0.9"
+          ],
+          "age_s": 14.8
+        },
+        "after": {
+          "tier": 3,
+          "score": 0.0178,
+          "vectors": {
+            "fresh": 0.0199,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "fresh=0.02<0.9"
+          ],
+          "age_s": 33.2
+        },
+        "expected": 3
+      },
+      {
+        "id": "D12",
+        "uc": "uc11",
+        "product": "engine_telemetry",
+        "healthy": {
+          "tier": 1,
+          "score": 1.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 15.1
+        },
+        "after": {
+          "tier": 3,
+          "score": 0.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 0.2075,
+            "poison": 0.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "drift=0.21<0.5",
+            "poison=0.00<0.6",
+            "zero_tolerance:vibration_ips:min"
+          ],
+          "age_s": 6.8
+        },
+        "expected": 3
+      },
+      {
+        "id": "D13",
+        "uc": "uc12",
+        "product": "benefit_claims",
+        "healthy": {
+          "tier": 1,
+          "score": 1.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [],
+          "age_s": 14.4
+        },
+        "after": {
+          "tier": 3,
+          "score": 0.0,
+          "vectors": {
+            "fresh": 1.0,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 0.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "poison=0.00<0.6",
+            "zero_tolerance:income_source:not_in_source"
+          ],
+          "age_s": 6.1
+        },
+        "expected": 3
+      }
+    ],
+    "run_end": 1794087021.3263094
+  }
+}

@@ -1,0 +1,44 @@
+product: engine_telemetry
+owner: engineering-data
+key_column: tail_number
+freshness:
+  sla_seconds: 7200
+lineage:
+  upstreams:
+  - acars_feed
+columns:
+  tail_number:
+    type: string
+    criticality: 3
+    pattern: ^VH-[A-Z]{3}$
+  vibration_ips:
+    type: number
+    criticality: 3
+    min: 0.05
+    max: 2.0
+  egt_c:
+    type: number
+    criticality: 3
+    min: 200
+    max: 1100
+  oil_pressure_psi:
+    type: number
+    criticality: 3
+    min: 10
+    max: 120
+zero_tolerance:
+- column: vibration_ips
+  rule: min
+  value: 0.05
+tools:
+  read:
+    lookup_engine:
+      handler: lookup
+      key: tail_number
+      args:
+        tail_number: ^VH-[A-Z]{3}$
+  write:
+    release_aircraft:
+      args:
+        tail_number: ^VH-[A-Z]{3}$
+        work_order: ^WO-\d{5}$

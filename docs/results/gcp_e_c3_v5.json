@@ -1,0 +1,125 @@
+{
+  "checks": [
+    {
+      "id": "E1",
+      "expected": "every chain folder valid; pre-v3 objects listed as legacy",
+      "actual": "12/12 chains valid; 1 legacy object(s)",
+      "status": "PASS",
+      "evidence": {
+        "chains": {
+          "cene-control/20261107T124455Z-47dc103b": {
+            "valid": true,
+            "msg": "ok (2 events)",
+            "events": 2,
+            "checkpoints": 0
+          },
+          "cene-control/20261107T210803Z-694fdd8d": {
+            "valid": true,
+            "msg": "ok (25 events)",
+            "events": 25,
+            "checkpoints": 0
+          },
+          "cene-control/20261107T213844Z-bf9df5ad": {
+            "valid": true,
+            "msg": "ok (2 events)",
+            "events": 2,
+            "checkpoints": 1
+          },
+          "cene-control/20261107T214355Z-1188d1ce": {
+            "valid": true,
+            "msg": "ok (4 events)",
+            "events": 4,
+            "checkpoints": 1
+          },
+          "cene-control/20261108T014652Z-1314da5c": {
+            "valid": true,
+            "msg": "ok (1 events)",
+            "events": 1,
+            "checkpoints": 0
+          },
+          "cene-gateway/20261107T124518Z-424109f4": {
+            "valid": true,
+            "msg": "ok (3 events)",
+            "events": 3,
+            "checkpoints": 0
+          },
+          "cene-gateway/20261107T210816Z-0ded70d3": {
+            "valid": true,
+            "msg": "ok (13 events)",
+            "events": 13,
+            "checkpoints": 0
+          },
+          "cene-gateway/20261107T211125Z-f1e9d86a": {
+            "valid": true,
+            "msg": "ok (18 events)",
+            "events": 18,
+            "checkpoints": 0
+          },
+          "cene-gateway/20261107T213251Z-6f2e3910": {
+            "valid": true,
+            "msg": "ok (106 events)",
+            "events": 106,
+            "checkpoints": 1
+          },
+          "cene-gateway/20261107T213854Z-3f2002ad": {
+            "valid": true,
+            "msg": "ok (16 events)",
+            "events": 16,
+            "checkpoints": 1
+          },
+          "cene-gateway/20261107T215426Z-b218f29c": {
+            "valid": true,
+            "msg": "ok (8 events)",
+            "events": 8,
+            "checkpoints": 0
+          },
+          "cene-gateway/20261108T014716Z-39b0d5e8": {
+            "valid": true,
+            "msg": "ok (5 events)",
+            "events": 5,
+            "checkpoints": 0
+          }
+        },
+        "legacy": [
+          "audit/000000000001-event.json"
+        ]
+      }
+    },
+    {
+      "id": "E2",
+      "expected": "valid: false naming seq 54",
+      "actual": "valid: False (hash mismatch at seq 54)",
+      "status": "PASS",
+      "evidence": {
+        "chain": "cene-gateway/20261107T213251Z-6f2e3910",
+        "field": "agent"
+      }
+    },
+    {
+      "id": "E3",
+      "expected": "gateway SA cannot overwrite an object (403, create-only)",
+      "actual": "inferred from IAM: gateway bucket roles ['roles/storage.objectCreator']; objectCreator has delete=False; retention {'effectiveTime': '2026-11-07T12:21:54.003000+00:00', 'retentionPeriod': '2592000'}",
+      "status": "PASS",
+      "evidence": {
+        "method": "inferred (impersonation of the gateway SA not available)",
+        "retention": {
+          "effectiveTime": "2026-11-07T12:21:54.003000+00:00",
+          "retentionPeriod": "2592000"
+        }
+      }
+    },
+    {
+      "id": "E4",
+      "expected": "event counts in the B/C window = {'token_issued': 1, 'decision': 1, 'escrow_submitted': 1, 'escrow_approved': 2, 'escrow_executed': 1}",
+      "actual": "{'token_issued': 1, 'escrow_submitted': 1, 'decision': 1, 'escrow_approved': 2, 'escrow_executed': 1}",
+      "status": "PASS",
+      "evidence": {
+        "window": [
+          1794102403.0,
+          1794102446.0
+        ],
+        "diff": {}
+      }
+    }
+  ]
+}

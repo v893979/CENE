@@ -1,0 +1,55 @@
+id: uc09
+title: Smart-grid dispatch and balancing
+book_ref: "Field guide, Chapter 4, Use Case 9"
+summary: >
+  A grid-balancing agent sends generation setpoints from live telemetry. Failures replicated: a
+  telemetry repeater freezes and keeps sending the last value, and a setpoint is sent after the
+  data it was based on has gone stale. Fixes: a 5-second freshness SLA that bounds token lifetime
+  (expired tokens are refused), flat-line detection, and argument limits on setpoints.
+seed: 19
+
+contracts:
+  - product: scada_telemetry
+    owner: grid-operations
+    key_column: reading_id
+    freshness: {sla_seconds: 5}
+    lineage: {upstreams: [scada_historian]}
+    columns:
+      reading_id: {type: string, criticality: 3, pattern: '^R-\d{7}$'}
+      substation_id: {type: string, criticality: 2, pattern: '^SS-\d{2}$'}
+      frequency_hz: {type: number, criticality: 3, min: 49, max: 51}
+      solar_mw: {type: number, criticality: 3, min: 0, max: 400}
+      load_mw: {type: number, criticality: 3, min: 0, max: 3000}
+    tools:
+      write:
+        dispatch_setpoint:
+          args: {unit_id: {enum: [PEAKER-1, PEAKER-2, BATT-1]}, setpoint_mw: {type: number, min: 0}}
+          limits: {setpoint_mw_max: 300}
+
+data:
+  scada_telemetry:
+    rows: 600
+    seed: 9
+    load_age_seconds: 1
+    columns:
+      reading_id: {gen: seq, prefix: "R-", digits: 7}
+      substation_id: {gen: choice, values: [SS-01, SS-02, SS-03]}
+      frequency_hz: {gen: normal, mean: 50.0, sd: 0.03, round: 3}
+      solar_mw: {gen: normal, mean: 120, sd: 25, clip: [0, 390], round: 1}
+      load_mw: {gen: normal, mean: 900, sd: 60, round: 1}
+lineage: {scada_historian: 1.0}
+
+steps:
+  - {name: "Live telemetry: Tier 1", do: evaluate, product: scada_telemetry, expect: {tier: 1}}
+  - {name: "Token lives only a few seconds (5 s SLA)", do: issue, as: t1, agent: grid-agent, products: [scada_telemetry], expect: {tier: 1, ttl_below: 6}}
+  - {name: "Dispatch within limits", do: call, token: t1, tool: dispatch_setpoint, args: {unit_id: BATT-1, setpoint_mw: 80}, expect: {decision: allowed}}
+  - {name: "Setpoint above the unit limit", do: call, token: t1, tool: dispatch_setpoint, args: {unit_id: PEAKER-1, setpoint_mw: 450}, expect: {decision: denied, code: ARG_OUT_OF_BOUNDS}}
+  - {name: "Unknown unit", do: call, token: t1, tool: dispatch_setpoint, args: {unit_id: PEAKER-9, setpoint_mw: 50}, expect: {decision: denied, code: ARG_OUT_OF_BOUNDS}}
+  - {name: "8 seconds pass without new telemetry", do: advance, seconds: 8}
+  - {name: "Dispatch on stale data refused (token expired)", do: call, token: t1, tool: dispatch_setpoint, args: {unit_id: PEAKER-1, setpoint_mw: 120}, expect: {decision: denied, code: TOKEN_EXPIRED}}
+  - {name: "Baseline: without controls the late dispatch goes through", do: direct, tool: dispatch_setpoint, args: {unit_id: PEAKER-1, setpoint_mw: 120}}
+  - {name: "Repeater freezes: solar readings stuck at one value", do: fault, fault: {type: flatline, product: scada_telemetry, column: solar_mw}}
+  - {name: "Frozen feed still 'arrives' on time", do: fault, fault: {type: reload, product: scada_telemetry}}
+  - {name: "Flat-line detected: Tier 3", do: evaluate, product: scada_telemetry, expect: {tier: 3, vector_below: {drift: 0.5}}}
+  - {name: "Token has no dispatch rights", do: issue, as: t2, agent: grid-agent, products: [scada_telemetry], expect: {tier: 3, lacks_tools: [dispatch_setpoint]}}
+  - {name: "Dispatch refused; protection relays stay in charge", do: call, token: t2, tool: dispatch_setpoint, args: {unit_id: PEAKER-1, setpoint_mw: 120}, expect: {decision: denied, code: TOOL_NOT_ALLOWED}}

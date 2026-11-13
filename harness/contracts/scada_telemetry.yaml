@@ -1,0 +1,46 @@
+product: scada_telemetry
+owner: grid-operations
+key_column: reading_id
+freshness:
+  sla_seconds: 5
+lineage:
+  upstreams:
+  - scada_historian
+columns:
+  reading_id:
+    type: string
+    criticality: 3
+    pattern: ^R-\d{7}$
+  substation_id:
+    type: string
+    criticality: 2
+    pattern: ^SS-\d{2}$
+  frequency_hz:
+    type: number
+    criticality: 3
+    min: 49
+    max: 51
+  solar_mw:
+    type: number
+    criticality: 3
+    min: 0
+    max: 400
+  load_mw:
+    type: number
+    criticality: 3
+    min: 0
+    max: 3000
+tools:
+  write:
+    dispatch_setpoint:
+      args:
+        unit_id:
+          enum:
+          - PEAKER-1
+          - PEAKER-2
+          - BATT-1
+        setpoint_mw:
+          type: number
+          min: 0
+      limits:
+        setpoint_mw_max: 300

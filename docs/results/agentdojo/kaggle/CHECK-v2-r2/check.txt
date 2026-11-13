@@ -1,0 +1,82 @@
+{
+ "served": "hf-12b",
+ "setup_hours": 0.23,
+ "episode_seconds": 8.62,
+ "model_calls": 1,
+ "seconds_per_call": [
+  8.599
+ ],
+ "mean_seconds_per_call": 8.6,
+ "tokens_per_call": [
+  [
+   2484,
+   30
+  ]
+ ],
+ "tool_calls": 0,
+ "llm_errors": [],
+ "episode_error": null,
+ "final_text": "thought\ncall:read_file{\"file_path\": \"bill-december-2023.txt\"}",
+ "projection": {
+  "seconds_per_episode": 8.6,
+  "queue": [
+   "M1",
+   "M3",
+   "M7",
+   "M2",
+   "M4",
+   "M8",
+   "M5",
+   "M6"
+  ],
+  "dropped": [],
+  "run_hours": 1.57,
+  "sessions": 1,
+  "total_gpu_hours": 1.82,
+  "quota_weeks": 1,
+  "split": [
+   [
+    "M1",
+    "M3",
+    "M7",
+    "M2",
+    "M4",
+    "M8",
+    "M5",
+    "M6"
+   ]
+  ],
+  "over_threshold_even_after_drops": false
+ },
+ "projection_if_episodes_are_1.5x_longer": {
+  "seconds_per_episode": 12.9,
+  "queue": [
+   "M1",
+   "M3",
+   "M7",
+   "M2",
+   "M4",
+   "M8",
+   "M5",
+   "M6"
+  ],
+  "dropped": [],
+  "run_hours": 2.36,
+  "sessions": 1,
+  "total_gpu_hours": 2.61,
+  "quota_weeks": 1,
+  "split": [
+   [
+    "M1",
+    "M3",
+    "M7",
+    "M2",
+    "M4",
+    "M8",
+    "M5",
+    "M6"
+   ]
+  ],
+  "over_threshold_even_after_drops": false
+ }
+}

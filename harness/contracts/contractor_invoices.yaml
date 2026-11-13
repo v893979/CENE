@@ -1,0 +1,82 @@
+product: contractor_invoices
+owner: field-operations
+key_column: invoice_id
+freshness:
+  sla_seconds: 1800
+lineage:
+  upstreams:
+  - outage_zones
+  - contractor_register
+duplicate_keys:
+- contractor_id
+- amount
+- job_code
+columns:
+  invoice_id:
+    type: string
+    criticality: 3
+    pattern: ^CI-\d{6}$
+  contractor_id:
+    type: string
+    criticality: 3
+    pattern: ^C-\d{2}$
+  account_id:
+    type: string
+    criticality: 3
+    pattern: ^ACC-\d{4}$
+  amount:
+    type: number
+    criticality: 3
+    min: 0
+    max: 50000
+  crew_size:
+    type: number
+    criticality: 2
+    min: 1
+    max: 40
+  job_code:
+    type: string
+    criticality: 2
+    pattern: ^J\d{3}$
+  status:
+    type: string
+    criticality: 2
+    allowed:
+    - open
+modes:
+  stress:
+    description: Declared natural-disaster operations
+tools:
+  write:
+    approve_payment:
+      args:
+        invoice_id: ^CI-\d{6}$
+        contractor_id: ^C-\d{2}$
+        account_id: ^ACC-\d{4}$
+        amount:
+          type: number
+          min: 0.01
+      limits:
+        amount_max: 50000
+      bind:
+        keys:
+        - invoice_id
+        - contractor_id
+        - account_id
+        max:
+          amount: amount
+temporal:
+- name: one_payment_per_invoice
+  tool: approve_payment
+  type: once_per
+  by:
+  - invoice_id
+  window_seconds: 2592000
+- name: contractor_daily_ceiling
+  tool: approve_payment
+  type: sum_within
+  field: amount
+  by:
+  - contractor_id
+  window_seconds: 86400
+  max: 60000

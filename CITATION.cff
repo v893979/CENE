@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "CENE: Context-Enforcement Network Engine"
+type: software
+authors:
+  - family-names: Rastogi
+    given-names: Vaibhav
+    orcid: "https://orcid.org/0009-0006-0900-4376"
+    affiliation: "Independent Researcher, Melbourne, Australia"
+version: 1.0.0
+license: Apache-2.0
+date-released: 2026-11-13
+abstract: >-
+  CENE enforces an AI agent's scope outside the model: data-quality tiers set the agent's authority, a short-lived
+  signed Context Token lists the tools, arguments and rows a task may use, a gateway checks every tool call
+  (refusing, or holding for two approvers) and a hash-chained audit log records every decision. Includes the
+  AgentDojo evaluation (frozen policy agentdojo-policy-v1) with Gemma 4 12B-it and Qwen3-8B.
+keywords:
+  - AI agents
+  - prompt injection
+  - tool-call enforcement
+  - AgentDojo
+  - audit

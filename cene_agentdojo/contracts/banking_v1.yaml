@@ -1,0 +1,119 @@
+# CENE policy v1 for the AgentDojo banking suite (v1.2.2). See docs/09_AgentDojo_Plan.md section 5.
+#
+# Sources (plan section 3): a = tool definitions, b = user-task prompt, c = trusted environment data
+# (structured bank-account fields that are not injection vectors, and file names).
+# Nothing here comes from injection tasks, attacker data or user-task ground truth.
+#
+# Each contract is one per-task data product. cene_agentdojo/policy.py fills its rows from P, H, Q, B, S, F
+# (plan section 5) and replaces the placeholders below, which are whole YAML values:
+#   $BALANCE  -> B, the account balance at the start of the task (c)
+#   $FILES    -> F, the list of file names in the environment (c)
+# No taint: no tool is untrusted and no screener runs.
+
+policy_version: v1
+
+common_quality: &quality
+  # The per-task products are fresh, have no upstreams and use their own rows as the baseline reference.
+  # The quality engine is not under test here; every token's score and tier are recorded.
+  tiers: {tier1: 0.85, tier2: 0.70}
+
+contracts:
+  # ---------------------------------------------------------------- payees: P ∪ H with amount ceiling B
+  - product: ad_payees
+    owner: agentdojo-banking
+    freshness: {sla_seconds: 86400}
+    columns:
+      recipient: {type: string, criticality: 3}
+      amount_cap: {type: number, criticality: 3, min: 0}
+    quality: *quality
+    tools:
+      read:
+        get_iban: {args: {}}                                            # a
+        get_balance: {args: {}}                                         # a
+        get_scheduled_transactions: {args: {}}                          # a
+        get_user_info: {args: {}}                                       # a
+        get_most_recent_transactions:                                   # a
+          args:
+            n: {type: number, min: 1}
+        read_file:                                                      # a, c
+          args:
+            file_path: {enum: $FILES}
+      write:
+        send_money:                                                     # a, b, c
+          args:
+            recipient: {}
+            amount: {type: number, min: 0.01, max: $BALANCE}
+            subject: {}
+            date: {}
+          bind:
+            keys: [recipient]
+            max: {amount: amount_cap}
+          on_unbound: escrow
+        # A future payment need not fit today's balance (user task 15's prompt: "rent is 2200", balance 1810),
+        # so scheduled amounts have no balance ceiling; the recipient rule is the same as send_money.
+        schedule_transaction:                                           # a, b, c
+          args:
+            recipient: {}
+            amount: {type: number, min: 0.01}
+            subject: {}
+            date: {}
+            recurring: {}
+          bind:
+            keys: [recipient]
+          on_unbound: escrow
+        update_user_info:                                               # a
+          always_escrow: true
+          args:
+            first_name: {nullable: true}
+            last_name: {nullable: true}
+            street: {nullable: true}
+            city: {nullable: true}
+    temporal:
+      - name: total_sent_within_balance                                 # c
+        tool: send_money
+        type: sum_within
+        field: amount
+        by: [agent]
+        window_seconds: 86400
+        max: $BALANCE
+
+  # ---------------------------------------------------------------- standing orders: (id, recipient) rows
+  # For each scheduled transaction (c): recipient may stay unset (null), stay the current one (c),
+  # or become an IBAN the user named in the prompt (b). Anything else is held in escrow.
+  - product: ad_scheduled
+    owner: agentdojo-banking
+    freshness: {sla_seconds: 86400}
+    columns:
+      id: {type: number, criticality: 3}
+      recipient: {type: string, criticality: 1}
+    quality: *quality
+    tools:
+      write:
+        update_scheduled_transaction:                                   # a, b, c
+          args:
+            id: {type: number}
+            recipient: {nullable: true}
+            amount: {nullable: true, type: number, min: 0.01}           # no balance ceiling (see above)
+            subject: {nullable: true}
+            date: {nullable: true}
+            recurring: {nullable: true}
+          bind:
+            keys: [id, recipient]
+          on_unbound: escrow
+
+  # ---------------------------------------------------------------- passwords the user dictated: Q
+  # Only issued when the prompt contains a single-quoted string; otherwise update_password is not in the
+  # token at all (TOOL_NOT_ALLOWED). A password not in Q is denied (BINDING_VIOLATION).
+  - product: ad_password
+    owner: agentdojo-banking
+    freshness: {sla_seconds: 86400}
+    columns:
+      password: {type: string, criticality: 3}
+    quality: *quality
+    tools:
+      write:
+        update_password:                                                # a, b
+          args:
+            password: {}
+          bind:
+            keys: [password]

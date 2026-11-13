@@ -1,0 +1,152 @@
+[
+ {
+  "claim": "Qwen M1 utility",
+  "from_json": "8/16",
+  "paper": "8/16",
+  "match": true
+ },
+ {
+  "claim": "Qwen M3 utility",
+  "from_json": "7/16",
+  "paper": "7/16",
+  "match": true
+ },
+ {
+  "claim": "Qwen M5 utility",
+  "from_json": "8/16",
+  "paper": "8/16",
+  "match": true
+ },
+ {
+  "claim": "Qwen M7 utility",
+  "from_json": "7/16",
+  "paper": "7/16",
+  "match": true
+ },
+ {
+  "claim": "Qwen M2 ASR",
+  "from_json": "52/144",
+  "paper": "52/144",
+  "match": true
+ },
+ {
+  "claim": "Qwen M2 hijacked",
+  "from_json": 68,
+  "paper": 68,
+  "match": true
+ },
+ {
+  "claim": "Qwen M4 ASR",
+  "from_json": "0/144",
+  "paper": "0/144",
+  "match": true
+ },
+ {
+  "claim": "Qwen M4 hijacked",
+  "from_json": 68,
+  "paper": 68,
+  "match": true
+ },
+ {
+  "claim": "Qwen M6 ASR",
+  "from_json": "50/144",
+  "paper": "50/144",
+  "match": true
+ },
+ {
+  "claim": "Qwen M6 hijacked",
+  "from_json": 64,
+  "paper": 64,
+  "match": true
+ },
+ {
+  "claim": "Qwen M8 ASR",
+  "from_json": "9/144",
+  "paper": "9/144",
+  "match": true
+ },
+ {
+  "claim": "Qwen M8 hijacked",
+  "from_json": 16,
+  "paper": 16,
+  "match": true
+ },
+ {
+  "claim": "Qwen M4 attacker held",
+  "from_json": 63,
+  "paper": 63,
+  "match": true
+ },
+ {
+  "claim": "Qwen M4 attacker ARG_OUT_OF_BOUNDS",
+  "from_json": 20,
+  "paper": 20,
+  "match": true
+ },
+ {
+  "claim": "Qwen M4 attacker TOOL_NOT_ALLOWED",
+  "from_json": 10,
+  "paper": 10,
+  "match": true
+ },
+ {
+  "claim": "Qwen M4 attacker allowed",
+  "from_json": 0,
+  "paper": 0,
+  "match": true
+ },
+ {
+  "claim": "Qwen M4 other attacker denial codes",
+  "from_json": [],
+  "paper": [],
+  "match": true
+ },
+ {
+  "claim": "Qwen held only",
+  "from_json": 46,
+  "paper": 46,
+  "match": true
+ },
+ {
+  "claim": "Qwen refused only",
+  "from_json": 17,
+  "paper": 17,
+  "match": true
+ },
+ {
+  "claim": "Qwen both",
+  "from_json": 5,
+  "paper": 5,
+  "match": true
+ },
+ {
+  "claim": "Gemma M7 detector",
+  "from_json": "111/119",
+  "paper": "111/119",
+  "match": true
+ },
+ {
+  "claim": "Qwen M7 detector",
+  "from_json": "13/26",
+  "paper": "13/26",
+  "match": true
+ },
+ {
+  "claim": "Audit chains verified (M3+M4, both models)",
+  "from_json": "320/320",
+  "paper": "320/320",
+  "match": true
+ },
+ {
+  "claim": "Qwen episodes total",
+  "from_json": 640,
+  "paper": 624,
+  "match": false
+ },
+ {
+  "claim": "Qwen errors total",
+  "from_json": 0,
+  "paper": 0,
+  "match": true
+ }
+]

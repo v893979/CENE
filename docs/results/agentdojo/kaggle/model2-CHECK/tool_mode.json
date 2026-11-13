@@ -1,0 +1,17 @@
+{
+ "selected": {
+  "provider": "native"
+ },
+ "attempts": [
+  {
+   "mode": {
+    "provider": "native"
+   },
+   "episodes": 3,
+   "with_tool_calls": 3,
+   "request_errors": false,
+   "qualifies": true,
+   "file": "select_native_tools.json"
+  }
+ ]
+}

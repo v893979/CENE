@@ -1,0 +1,188 @@
+{
+  "control": "https://<cene-control-url>",
+  "gateway": "https://<cene-gateway-url>",
+  "user": "<tester-google-account>",
+  "summary": {
+    "C": {
+      "PASS": 11,
+      "FAIL": 0,
+      "SKIP": 0
+    },
+    "E": {
+      "PASS": 1,
+      "FAIL": 0,
+      "SKIP": 0
+    }
+  },
+  "checks": [
+    {
+      "id": "C1",
+      "expected": "tier 2; fresh < 0.9",
+      "actual": "tier 2; fresh 0.7054; reasons ['fresh=0.71<0.9']",
+      "status": "PASS",
+      "evidence": {
+        "vectors": {
+          "fresh": 0.7054,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "score": 0.7376
+      },
+      "utc": "2026-11-08T01:46:57Z"
+    },
+    {
+      "id": "C2",
+      "expected": "requested by cene-agent: tier 2; approve_payment escrow; req_by = <cene-agent-service-account>",
+      "actual": "tier 2; approve_payment escrow; req_by <cene-agent-service-account>",
+      "status": "PASS",
+      "evidence": {
+        "token": "eyJhbGciOiJFUzI1NiIs...",
+        "jti": "2bfce3af2d594a10b6be7f11ca733355",
+        "http": 200,
+        "trace": "8690fcfaa542ec7e4e650257690a4144",
+        "ms": 3686.9
+      },
+      "utc": "2026-11-08T01:47:13Z"
+    },
+    {
+      "id": "C3",
+      "expected": "decision escrow, escrow id",
+      "actual": "200 escrow id=ad219acad85d",
+      "status": "PASS",
+      "evidence": {
+        "invoice": "INV-000358",
+        "caller": "<cene-agent-service-account>",
+        "http": 200,
+        "decision": "escrow",
+        "trace": "349f68a23cf46b4a80764b44f9e15702",
+        "ms": 2687.3
+      },
+      "utc": "2026-11-08T01:47:15Z"
+    },
+    {
+      "id": "C4",
+      "expected": "item listed as pending",
+      "actual": "200; listed=True",
+      "status": "PASS",
+      "evidence": {
+        "http": 200,
+        "trace": "c8ce9ded26b502d8a085a6831d8a8fb7",
+        "ms": 49.2
+      },
+      "utc": "2026-11-08T01:47:15Z"
+    },
+    {
+      "id": "C5",
+      "expected": "approve as user: status pending",
+      "actual": "200 pending",
+      "status": "PASS",
+      "evidence": {
+        "approver": "<tester-google-account>",
+        "http": 200,
+        "trace": "762de4117e65052aa085a6831d8a8745",
+        "ms": 80.6
+      },
+      "utc": "2026-11-08T01:47:16Z"
+    },
+    {
+      "id": "C6",
+      "expected": "approve as user again: 409 DUPLICATE_APPROVER",
+      "actual": "409 DUPLICATE_APPROVER",
+      "status": "PASS",
+      "evidence": {
+        "approver": "<tester-google-account>",
+        "http": 409,
+        "trace": "330e0144cfa16b0aa085a6831d8a8772",
+        "ms": 24.2
+      },
+      "utc": "2026-11-08T01:47:16Z"
+    },
+    {
+      "id": "C6b",
+      "expected": "approve as cene-agent (requester): 409 SELF_APPROVAL",
+      "actual": "409 SELF_APPROVAL",
+      "status": "PASS",
+      "evidence": {
+        "approver": "<cene-agent-service-account>",
+        "http": 409,
+        "trace": "e304d3ebcd2e62dba085a6831d8a8570",
+        "ms": 28.0
+      },
+      "utc": "2026-11-08T01:47:16Z"
+    },
+    {
+      "id": "C7",
+      "expected": "approve as cene-approver: status executed",
+      "actual": "200 executed",
+      "status": "PASS",
+      "evidence": {
+        "approver": "<cene-approver-service-account>",
+        "http": 200,
+        "trace": "8a14831eccb83371a085a6831d8a879f",
+        "ms": 8078.0
+      },
+      "utc": "2026-11-08T01:47:24Z"
+    },
+    {
+      "id": "C8",
+      "expected": "approve again: 409 ESCROW_CLOSED",
+      "actual": "409 ESCROW_CLOSED",
+      "status": "PASS",
+      "evidence": {
+        "approver": "<cene-approver-service-account>",
+        "http": 409,
+        "trace": "6970604d5f76fda8e7928b0bffbf4d15",
+        "ms": 33.0
+      },
+      "utc": "2026-11-08T01:47:24Z"
+    },
+    {
+      "id": "C9",
+      "expected": "no ID token: 401/403",
+      "actual": "403 Cloud Run",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "ms": 290.2
+      },
+      "utc": "2026-11-08T01:47:24Z"
+    },
+    {
+      "id": "E4a",
+      "expected": "escrow_executed lists exactly ['<tester-google-account>', '<cene-approver-service-account>']",
+      "actual": "['<tester-google-account>', '<cene-approver-service-account>'] (1 event(s))",
+      "status": "PASS",
+      "evidence": {
+        "escrow_id": "ad219acad85d"
+      },
+      "utc": "2026-11-08T01:47:29Z"
+    },
+    {
+      "id": "C11",
+      "expected": "reload healthy: tier 1",
+      "actual": "tier 1",
+      "status": "PASS",
+      "evidence": {
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        }
+      },
+      "utc": "2026-11-08T01:47:56Z"
+    }
+  ],
+  "extra": {
+    "run_start": 1794102361.6493952,
+    "C3_jti": "2bfce3af2d594a10b6be7f11ca733355",
+    "C3_escrow_id": "ad219acad85d",
+    "C3_end": 1794102444.5128174,
+    "run_end": 1794102476.2069523
+  }
+}

@@ -1,0 +1,22 @@
+CENE: Context-Enforcement Network Engine. Copyright 2026 Vaibhav Rastogi.
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party components
+----------------------
+
+1. Hugging Face Transformers 5.22.2 (Apache License 2.0)
+   Copyright 2026 The HuggingFace Team. All rights reserved.
+   cene_agentdojo/serve_hf.py contains two data structures copied from
+   transformers/cli/serving/utils.py (_RESPONSE_TEMPLATE_FALLBACKS): the Gemma 4 and
+   Qwen 2/2.5/3 response templates (GEMMA4_RESPONSE_TEMPLATE, QWEN3_RESPONSE_TEMPLATE).
+   They are used only when that module cannot be imported.
+
+2. AgentDojo 0.1.35 (MIT License)
+   Copyright (c) 2024 Edoardo Debenedetti, Jie Zhang, Mislav Balunovic, Luca Beurer-Kellner,
+   Marc Fischer, and Florian Tramer. Full licence text: LICENSES/AgentDojo-MIT.txt.
+   No AgentDojo source code is copied into this repository; cene_agentdojo/ imports the
+   installed package. Text from AgentDojo's tasks, injection tasks, attack and environment
+   data (for example user prompts, injected instructions, IBANs and file contents) appears in
+   the recorded results under docs/results/agentdojo/ and in test fixtures under tests/.
+   AgentDojo, (c) its authors, MIT licence.

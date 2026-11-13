@@ -1,0 +1,24 @@
+{
+ "stack": "transformers",
+ "transformers": "5.22.2",
+ "torch": "2.14.0+cu130",
+ "cuda_devices": [
+  "Tesla T4",
+  "Tesla T4"
+ ],
+ "dtype": "float16",
+ "attn_implementation": "sdpa",
+ "max_memory_gib": 14.0,
+ "max_new_tokens": 1024,
+ "path": "/kaggle/input/models/google/gemma-4/transformers/gemma-4-12b-it/2",
+ "name": "gemma-4-12b-it",
+ "text_only_missing_keys": [],
+ "text_only_result": "ok",
+ "model_class": "Gemma4UnifiedForCausalLM",
+ "text_only": true,
+ "device_map": [
+  "0",
+  "1"
+ ],
+ "load_seconds": 51.7
+}

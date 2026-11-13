@@ -1,0 +1,80 @@
+product: lab_results
+owner: pathology-data
+key_column: patient_id
+freshness:
+  sla_seconds: 3600
+lineage:
+  upstreams:
+  - lis_feed
+columns:
+  patient_id:
+    type: string
+    criticality: 3
+    pattern: ^P-\d{6}$
+  creatinine:
+    type: number
+    criticality: 3
+    min: 0.2
+    max: 15
+  creatinine_unit:
+    type: string
+    criticality: 3
+    allowed:
+    - mg/dL
+  egfr:
+    type: number
+    criticality: 3
+    min: 5
+    max: 150
+  potassium:
+    type: number
+    criticality: 3
+    min: 2
+    max: 7.5
+  weight_kg:
+    type: number
+    criticality: 2
+    min: 30
+    max: 250
+  ward:
+    type: string
+    criticality: 1
+  notes:
+    type: string
+    criticality: 1
+zero_tolerance:
+- column: creatinine_unit
+  rule: equals
+  value: mg/dL
+quality:
+  gate:
+    comp_crit: 0.95
+tools:
+  read:
+    lookup_patient:
+      handler: lookup
+      key: patient_id
+      args:
+        patient_id: ^P-\d{6}$
+    fetch_external_document:
+      handler: external
+      args:
+        document_id: ^DOC-\d{3}$
+  write:
+    recommend_regimen:
+      args:
+        patient_id: ^P-\d{6}$
+        regimen_code:
+          enum:
+          - RX-A
+          - RX-B
+          - RX-C
+        dose_mg:
+          type: number
+          min: 1
+      limits:
+        dose_mg_max: 2000
+taint:
+  untrusted_tools:
+  - fetch_external_document
+  on_taint: escrow

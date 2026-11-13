@@ -1,0 +1,220 @@
+{
+  "control": "https://<cene-control-url>",
+  "gateway": "https://<cene-gateway-url>",
+  "user": "<tester-google-account>",
+  "summary": {
+    "B": {
+      "PASS": 14,
+      "FAIL": 0,
+      "SKIP": 0,
+      "INFO": 0
+    }
+  },
+  "checks": [
+    {
+      "id": "B1",
+      "expected": "tier 1; fresh >= 0.9",
+      "actual": "tier 1; fresh 1.0; age 9s",
+      "status": "PASS",
+      "evidence": {
+        "vectors": {
+          "fresh": 1.0,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [],
+        "score": 1.0
+      },
+      "utc": "2026-11-08T03:14:58Z"
+    },
+    {
+      "id": "B2",
+      "expected": "tier 1; lookup/approve direct; token < 4 KB; Merkle bindings",
+      "actual": "tier 1; tools {'lookup_invoice': 'direct', 'approve_payment': 'direct'}; 1658 B; 278 bindings",
+      "status": "PASS",
+      "evidence": {
+        "token": "eyJhbGciOiJFUzI1NiIs...",
+        "jti": "9afa1b6a13e54a8396f1243cb7f7ef1c",
+        "http": 200,
+        "trace": "8bc04b1c62d86e3e1cd66e7b603719f8",
+        "ms": 3354.8
+      },
+      "utc": "2026-11-08T03:15:01Z"
+    },
+    {
+      "id": "B3",
+      "expected": "200; row with JSON types (amount number, nulls null)",
+      "actual": "200; amount float; string-nulls []",
+      "status": "PASS",
+      "evidence": {
+        "row": {
+          "invoice_id": "INV-000001",
+          "vendor_id": "V-004",
+          "account_id": "ACC-1004",
+          "amount": 7008.08,
+          "discount_pct": 1.73,
+          "currency": "AUD",
+          "status": "open",
+          "vendor_notes": "Thanks for your business."
+        },
+        "http": 200,
+        "decision": "allowed",
+        "trace": "0836c1d184965d444e809d2dccf153d6",
+        "ms": 1499.7
+      },
+      "utc": "2026-11-08T03:15:03Z"
+    },
+    {
+      "id": "B4",
+      "expected": "200 allowed",
+      "actual": "200 allowed",
+      "status": "PASS",
+      "evidence": {
+        "invoice": "INV-000019",
+        "http": 200,
+        "decision": "allowed",
+        "trace": "e3e8f79c342c94e6944e73eddf4a0967",
+        "ms": 370.0
+      },
+      "utc": "2026-11-08T03:15:03Z"
+    },
+    {
+      "id": "B5",
+      "expected": "403 TEMPORAL_VIOLATION",
+      "actual": "403 TEMPORAL_VIOLATION",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "c7554ca6b4c6e286944e73eddf4a01bf",
+        "ms": 75.3
+      },
+      "utc": "2026-11-08T03:15:03Z"
+    },
+    {
+      "id": "B6",
+      "expected": "403 BINDING_VIOLATION",
+      "actual": "403 BINDING_VIOLATION",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "532462d26c114a0b944e73eddf4a0c50",
+        "ms": 80.0
+      },
+      "utc": "2026-11-08T03:15:03Z"
+    },
+    {
+      "id": "B7",
+      "expected": "403 BINDING_VIOLATION",
+      "actual": "403 BINDING_VIOLATION",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "903bc3cd3253c4b9944e73eddf4a011f",
+        "ms": 76.3
+      },
+      "utc": "2026-11-08T03:15:03Z"
+    },
+    {
+      "id": "B8",
+      "expected": "403 (BINDING_VIOLATION or ARG_OUT_OF_BOUNDS)",
+      "actual": "403 BINDING_VIOLATION",
+      "status": "PASS",
+      "evidence": {
+        "bound": {
+          "amount": 1808.78
+        },
+        "http": 403,
+        "decision": "denied",
+        "trace": "1cce29a437c1de35944e73eddf4a0d49",
+        "ms": 78.7
+      },
+      "utc": "2026-11-08T03:15:03Z"
+    },
+    {
+      "id": "B9",
+      "expected": "403 TOOL_NOT_ALLOWED",
+      "actual": "403 TOOL_NOT_ALLOWED",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "7a31e5ce92ac999a944e73eddf4a0692",
+        "ms": 70.8
+      },
+      "utc": "2026-11-08T03:15:03Z"
+    },
+    {
+      "id": "B10",
+      "expected": "200 then 403 REPLAY",
+      "actual": "200 then 403 REPLAY",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "ef98451da2da7e9c944e73eddf4a0465",
+        "ms": 82.6
+      },
+      "utc": "2026-11-08T03:15:04Z"
+    },
+    {
+      "id": "B11",
+      "expected": "403 TOKEN_MISSING",
+      "actual": "403 TOKEN_MISSING",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "20085427dbb3b457944e73eddf4a0799",
+        "ms": 67.3
+      },
+      "utc": "2026-11-08T03:15:04Z"
+    },
+    {
+      "id": "B12",
+      "expected": "403 TOKEN_BAD_SIGNATURE",
+      "actual": "403 TOKEN_BAD_SIGNATURE",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "57fb71b6a2c236a3944e73eddf4a0b71",
+        "ms": 68.3
+      },
+      "utc": "2026-11-08T03:15:04Z"
+    },
+    {
+      "id": "B13",
+      "expected": "403 TOKEN_BAD_SIGNATURE",
+      "actual": "403 TOKEN_BAD_SIGNATURE",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "a75e08a56d79a5b5944e73eddf4a0ef8",
+        "ms": 76.7
+      },
+      "utc": "2026-11-08T03:15:04Z"
+    },
+    {
+      "id": "B14",
+      "expected": "exactly 1 allowed approve_payment in gateway audit",
+      "actual": "1",
+      "status": "PASS",
+      "evidence": {
+        "jti": "9afa1b6a13e54a8396f1243cb7f7ef1c"
+      },
+      "utc": "2026-11-08T03:15:10Z"
+    }
+  ],
+  "extra": {
+    "run_start": 1794107670.0950375,
+    "B_jti": "9afa1b6a13e54a8396f1243cb7f7ef1c",
+    "run_end": 1794107710.8187578
+  }
+}

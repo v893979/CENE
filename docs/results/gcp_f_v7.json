@@ -1,0 +1,80 @@
+{
+  "control": "https://<cene-control-url>",
+  "gateway": "https://<cene-gateway-url>",
+  "user": "<tester-google-account>",
+  "summary": {
+    "F": {
+      "PASS": 4,
+      "FAIL": 0,
+      "SKIP": 0,
+      "INFO": 0
+    }
+  },
+  "checks": [
+    {
+      "id": "F3",
+      "expected": "cold-start lookup_invoice (gateway + tools from zero)",
+      "actual": "11613 ms, 200",
+      "status": "PASS",
+      "evidence": {
+        "http": 200,
+        "decision": "allowed",
+        "trace": "5d57b732df8723f37afede4b4ea4fea6",
+        "ms": 11612.9
+      },
+      "utc": "2026-11-08T03:11:05Z"
+    },
+    {
+      "id": "F1",
+      "expected": "100 warm lookups: p50/p95/p99 ms",
+      "actual": "{\"n\": 100, \"errors\": 0, \"p50\": 904.2, \"p95\": 982.3, \"p99\": 1740.1, \"mean\": 904.0}",
+      "status": "PASS",
+      "evidence": {},
+      "utc": "2026-11-08T03:12:40Z"
+    },
+    {
+      "id": "F2",
+      "expected": "20 token issues: p50/p95 ms",
+      "actual": "{\"n\": 20, \"p50\": 3246.4, \"p95\": 4138.6, \"mean\": 3362.7}",
+      "status": "PASS",
+      "evidence": {},
+      "utc": "2026-11-08T03:13:47Z"
+    },
+    {
+      "id": "F4",
+      "expected": "BigQuery lookup alone: client and job ms",
+      "actual": "{\"n\": 20, \"client_p50\": 704.8, \"client_p95\": 3007.0, \"job_p50\": 197.0, \"job_p95\": 224.0}",
+      "status": "PASS",
+      "evidence": {},
+      "utc": "2026-11-08T03:14:09Z"
+    }
+  ],
+  "extra": {
+    "run_start": 1794107436.761135,
+    "latency": {
+      "F3_cold_ms": 11612.9,
+      "F1": {
+        "n": 100,
+        "errors": 0,
+        "p50": 904.2,
+        "p95": 982.3,
+        "p99": 1740.1,
+        "mean": 904.0
+      },
+      "F2": {
+        "n": 20,
+        "p50": 3246.4,
+        "p95": 4138.6,
+        "mean": 3362.7
+      },
+      "F4": {
+        "n": 20,
+        "client_p50": 704.8,
+        "client_p95": 3007.0,
+        "job_p50": 197.0,
+        "job_p95": 224.0
+      }
+    },
+    "run_end": 1794107649.9258804
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "control": "https://<cene-control-url>",
+  "gateway": "https://<cene-gateway-url>",
+  "user": "<tester-google-account>",
+  "summary": {
+    "D": {
+      "PASS": 1,
+      "FAIL": 1,
+      "SKIP": 0
+    }
+  },
+  "checks": [
+    {
+      "id": "D11h",
+      "expected": "uc09 scada_telemetry healthy tier 1",
+      "actual": "tier 3 (age 9.3s, load took 20.8s) ['fresh=0.55<0.9']",
+      "status": "FAIL",
+      "evidence": {
+        "tier": 3,
+        "score": 0.5565,
+        "vectors": {
+          "fresh": 0.5504,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "fresh=0.55<0.9"
+        ],
+        "age_s": 9.3
+      },
+      "utc": "2026-11-08T02:23:32Z"
+    },
+    {
+      "id": "D11f",
+      "expected": "uc09 wait 15s past SLA -> tier 3",
+      "actual": "tier 3 (age 27.0s) ['fresh=0.05<0.9']",
+      "status": "PASS",
+      "evidence": {
+        "fault": null,
+        "tier": 3,
+        "score": 0.0425,
+        "vectors": {
+          "fresh": 0.0472,
+          "lin": 1.0,
+          "comp": 1.0,
+          "drift": 1.0,
+          "poison": 1.0,
+          "comp_crit": 1.0
+        },
+        "reasons": [
+          "fresh=0.05<0.9"
+        ],
+        "age_s": 27.0
+      },
+      "utc": "2026-11-08T02:23:50Z"
+    }
+  ],
+  "extra": {
+    "run_start": 1794104585.038688,
+    "phase_d": [
+      {
+        "id": "D11",
+        "uc": "uc09",
+        "product": "scada_telemetry",
+        "healthy": {
+          "tier": 3,
+          "score": 0.5565,
+          "vectors": {
+            "fresh": 0.5504,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "fresh=0.55<0.9"
+          ],
+          "age_s": 9.3
+        },
+        "after": {
+          "tier": 3,
+          "score": 0.0425,
+          "vectors": {
+            "fresh": 0.0472,
+            "lin": 1.0,
+            "comp": 1.0,
+            "drift": 1.0,
+            "poison": 1.0,
+            "comp_crit": 1.0
+          },
+          "reasons": [
+            "fresh=0.05<0.9"
+          ],
+          "age_s": 27.0
+        },
+        "expected": 3
+      }
+    ],
+    "run_end": 1794104630.3079073
+  }
+}

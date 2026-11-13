@@ -1,0 +1,65 @@
+id: uc05
+title: Multi-tier aerospace and defence procurement
+book_ref: "Field guide, Chapter 4, Use Case 5"
+summary: >
+  A procurement agent issues purchase orders from vendor bids. Failures replicated: a purchase
+  order for a part number or specification revision that differs from the approved bid; bid rows
+  with an unapproved material; and specifications arriving through an upstream repository that
+  has lost its approval status. Fixes: argument enums and row bindings, rule-violating rows
+  excluded from bindings, and a lineage score that downgrades to two-person escrow, where security
+  can reject the order.
+seed: 15
+
+contracts:
+  - product: vendor_bids
+    owner: procurement-data
+    key_column: bid_id
+    freshness: {sla_seconds: 86400}
+    lineage: {upstreams: [approved_spec_repo, vendor_portal]}
+    columns:
+      bid_id: {type: string, criticality: 3, pattern: '^B-\d{5}$'}
+      part_number: {type: string, criticality: 3, pattern: '^TF-\d{4}-[A-Z]$'}
+      spec_revision: {type: string, criticality: 3, allowed: [R7]}
+      material: {type: string, criticality: 3, allowed: [Ti-6Al-4V]}
+      unit_price: {type: number, criticality: 2, min: 0.01, max: 10000}
+      quantity: {type: number, criticality: 2, min: 1, max: 100000}
+      vendor_id: {type: string, criticality: 2, pattern: '^SUP-\d{3}$'}
+    tools:
+      write:
+        issue_purchase_order:
+          args: {bid_id: '^B-\d{5}$', part_number: '^TF-\d{4}-[A-Z]$', spec_revision: {enum: [R7]}, quantity: {type: number, min: 1}}
+          limits: {quantity_max: 10000}
+          bind: {keys: [bid_id, part_number], max: {quantity: quantity}}
+
+data:
+  vendor_bids:
+    rows: 300
+    seed: 5
+    load_age_seconds: 600
+    columns:
+      bid_id: {gen: seq, prefix: "B-", digits: 5}
+      part_number: {gen: choice, values: [TF-1001-A, TF-1002-B, TF-2040-C, TF-3300-D]}
+      spec_revision: {gen: const, value: R7}
+      material: {gen: const, value: Ti-6Al-4V}
+      unit_price: {gen: normal, mean: 42, sd: 6, clip: [5, 200], round: 2}
+      quantity: {gen: int, mean: 2000, sd: 500, clip: [100, 9000]}
+      vendor_id: {gen: choice, values: [SUP-001, SUP-002, SUP-003]}
+lineage: {approved_spec_repo: 1.0, vendor_portal: 1.0}
+
+steps:
+  - {name: "Approved bids: Tier 1", do: evaluate, product: vendor_bids, expect: {tier: 1}}
+  - {name: "Token for purchasing", do: issue, as: t1, agent: procurement-agent, products: [vendor_bids], expect: {tier: 1}}
+  - {name: "Purchase order matching an approved bid", do: call, token: t1, tool: issue_purchase_order, from_binding: {binding: 0, amount_fraction: 0.5}, args: {spec_revision: R7}, expect: {decision: allowed}}
+  - {name: "Same bid, altered specification revision", do: call, token: t1, tool: issue_purchase_order, from_binding: {binding: 1, amount_fraction: 0.5}, args: {spec_revision: R8}, expect: {decision: denied, code: ARG_OUT_OF_BOUNDS}}
+  - {name: "Same bid, different part number", do: call, token: t1, tool: issue_purchase_order, from_binding: {binding: 2, amount_fraction: 0.5}, args: {spec_revision: R7}, override: {part_number: TF-9999-Z}, expect: {decision: denied, code: BINDING_VIOLATION}}
+  - {name: "Quantity above the bid", do: call, token: t1, tool: issue_purchase_order, from_binding: {binding: 3, amount_fraction: 3.0}, args: {spec_revision: R7}, expect: {decision: denied}}
+  - {name: "Bid B-00011 lists an unapproved material", do: fault, fault: {type: set_value, product: vendor_bids, where: {bid_id: B-00011}, set: {material: Ti-unknown}}}
+  - {name: "New token excludes rule-violating rows from bindings", do: issue, as: t2, agent: procurement-agent, products: [vendor_bids]}
+  - {name: "Order against the unapproved-material bid is refused", do: call, token: t2, tool: issue_purchase_order, args: {bid_id: B-00011, part_number: TF-1001-A, spec_revision: R7, quantity: 10}, expect: {decision: denied, code: BINDING_VIOLATION}}
+  - {name: "Spec repository loses approval (health 0.55)", do: fault, fault: {type: lineage, node: approved_spec_repo, health: 0.55}}
+  - {name: "Lineage drops the product to Tier 2", do: evaluate, product: vendor_bids, expect: {tier: 2, vector_below: {lin: 0.6}}}
+  - {name: "Tier-2 token: orders need two approvers", do: issue, as: t3, agent: procurement-agent, products: [vendor_bids], expect: {tier: 2, modes: {issue_purchase_order: escrow}}}
+  - {name: "Order held in escrow (quarantine)", do: call, token: t3, tool: issue_purchase_order, from_binding: {binding: 5, amount_fraction: 0.5}, args: {spec_revision: R7}, expect: {decision: escrow}}
+  - {name: "Security reviewer rejects it", do: reject, approver: security-officer, expect: {status: rejected}}
+  - {name: "Approval after rejection is refused", do: approve, approver: buyer-1, expect: {status: error, code: ESCROW_CLOSED}}
+  - {name: "Only the one valid order was issued", do: assert_executed, tool: issue_purchase_order, expect: {count: 1}}

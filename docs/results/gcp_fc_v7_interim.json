@@ -1,0 +1,79 @@
+{
+  "control": "https://<cene-control-url>",
+  "gateway": "https://<cene-gateway-url>",
+  "user": "<tester-google-account>",
+  "summary": {
+    "F": {
+      "PASS": 4,
+      "FAIL": 0,
+      "SKIP": 0
+    }
+  },
+  "checks": [
+    {
+      "id": "FC1",
+      "expected": "lookup_invoice -> 403 STATE_UNAVAILABLE in < 3 s",
+      "actual": "403 STATE_UNAVAILABLE in 1871 ms",
+      "status": "PASS",
+      "evidence": {
+        "http": 403,
+        "decision": "denied",
+        "trace": "2989ac855f1120704d868d01ea2ae115",
+        "ms": 1870.8
+      },
+      "utc": "2026-11-08T02:42:11Z"
+    },
+    {
+      "id": "FC2",
+      "expected": "approve_payment (valid binding) -> 403 STATE_UNAVAILABLE; no call reaches cene-tools",
+      "actual": "403 STATE_UNAVAILABLE in 1087 ms; cene-tools requests in window: 0",
+      "status": "PASS",
+      "evidence": {
+        "invoice": "INV-000358",
+        "http": 403,
+        "decision": "denied",
+        "trace": "615b233291e0458e4d868d01ea2ae98d",
+        "ms": 1087.0,
+        "tools_requests_in_window": 0
+      },
+      "utc": "2026-11-08T02:42:12Z"
+    },
+    {
+      "id": "FC3",
+      "expected": "10 calls in a row all denied; median and max time to deny",
+      "actual": "10/10 denied; median 1081 ms, max 1116 ms",
+      "status": "PASS",
+      "evidence": {
+        "median_ms": 1081.2,
+        "max_ms": 1115.8
+      },
+      "utc": "2026-11-08T02:42:23Z"
+    },
+    {
+      "id": "FC4",
+      "expected": "12 decision events, all denied STATE_UNAVAILABLE",
+      "actual": "12 STATE_UNAVAILABLE, 0 other",
+      "status": "PASS",
+      "evidence": {
+        "audit_prefix": "audit/cene-gateway-failclosed/"
+      },
+      "utc": "2026-11-08T02:43:27Z"
+    }
+  ],
+  "extra": {
+    "run_start": 1794105710.317556,
+    "fc3_ms": [
+      1081.0,
+      1081.5,
+      1100.2,
+      1079.9,
+      1072.6,
+      1115.8,
+      1066.5,
+      1082.3,
+      1078.0,
+      1106.0
+    ],
+    "run_end": 1794105807.723487
+  }
+}

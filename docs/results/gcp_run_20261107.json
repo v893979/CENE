@@ -1,0 +1,4153 @@
+{
+  "date_utc": "2026-11-07",
+  "project": "<gcp-project-id>",
+  "region": "australia-southeast2",
+  "live_image": "cene:v5",
+  "runs": {
+    "gcp_abc_v4": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "A": {
+          "PASS": 5,
+          "FAIL": 1,
+          "SKIP": 1
+        },
+        "B": {
+          "PASS": 14,
+          "FAIL": 0,
+          "SKIP": 0
+        },
+        "C": {
+          "PASS": 8,
+          "FAIL": 2,
+          "SKIP": 1
+        }
+      },
+      "checks": [
+        {
+          "id": "A1-c",
+          "expected": "200 {\"ok\":true,\"role\":\"control\"}",
+          "actual": "200 {\"ok\": true, \"role\": \"control\"}",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "48085af9d0a1914954ed025b61f43c92",
+            "ms": 583.8
+          },
+          "utc": "2026-11-07T21:10:31Z"
+        },
+        {
+          "id": "A1-g",
+          "expected": "200 {\"ok\":true,\"role\":\"gateway\"}",
+          "actual": "200 {\"ok\": true, \"role\": \"gateway\"}",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "09d543aa76f466a5d17c5220a65ed121",
+            "ms": 569.9
+          },
+          "utc": "2026-11-07T21:10:32Z"
+        },
+        {
+          "id": "A2-c",
+          "expected": "401/403 from Cloud Run (app not reached)",
+          "actual": "403 Cloud Run page",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "ms": 295.9
+          },
+          "utc": "2026-11-07T21:10:32Z"
+        },
+        {
+          "id": "A2-g",
+          "expected": "401/403 from Cloud Run (app not reached)",
+          "actual": "403 Cloud Run page",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "ms": 277.9
+          },
+          "utc": "2026-11-07T21:10:32Z"
+        },
+        {
+          "id": "A3",
+          "expected": "all three services on the same tag",
+          "actual": "{\"control\": \"v4\", \"gateway\": \"v4\", \"tools\": \"v4\"}",
+          "status": "PASS",
+          "evidence": {},
+          "utc": "2026-11-07T21:10:43Z"
+        },
+        {
+          "id": "A4",
+          "expected": "only gateway SA invokes tools; user gets 403",
+          "actual": "invokers=['serviceAccount:<cene-gateway-service-account>']; user call 200 (user project roles ['roles/owner'])",
+          "status": "FAIL",
+          "evidence": {
+            "user_project_roles": [
+              "roles/owner"
+            ],
+            "http": 200,
+            "trace": "facb6be8878816511241282d480b117c",
+            "ms": 1297.9
+          },
+          "utc": "2026-11-07T21:10:52Z"
+        },
+        {
+          "id": "A4b",
+          "expected": "non-owner identity (agent SA) calling tools gets 403",
+          "actual": "impersonation refused: //console.cloud.google.com/iam-admin/troubleshooter/summary;errorId=CiQwMWExYjdkOS05ZTg0LTc5OGItOGQ0ZC00MzZiYWMwZmI2NzkSAA%3D%3D\n  reason: IAM_PERMISSION_DENIED",
+          "status": "SKIP",
+          "evidence": {},
+          "utc": "2026-11-07T21:10:56Z"
+        },
+        {
+          "id": "B1",
+          "expected": "tier 1; fresh >= 0.9",
+          "actual": "tier 1; fresh 1.0; age 15s",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "score": 1.0
+          },
+          "utc": "2026-11-07T21:11:21Z"
+        },
+        {
+          "id": "B2",
+          "expected": "tier 1; lookup/approve direct; token < 4 KB; Merkle bindings",
+          "actual": "tier 1; tools {'lookup_invoice': 'direct', 'approve_payment': 'direct'}; 1614 B; 278 bindings",
+          "status": "PASS",
+          "evidence": {
+            "token": "eyJhbGciOiJFUzI1NiIs...",
+            "jti": "53bfdf86e2ff49108569bb4af693d0f7",
+            "http": 200,
+            "trace": "35b951c0b64fe03d2bdb45c6d7a2fb39",
+            "ms": 3230.7
+          },
+          "utc": "2026-11-07T21:11:24Z"
+        },
+        {
+          "id": "B3",
+          "expected": "200; row with JSON types (amount number, nulls null)",
+          "actual": "200; amount float; string-nulls []",
+          "status": "PASS",
+          "evidence": {
+            "row": {
+              "invoice_id": "INV-000001",
+              "vendor_id": "V-004",
+              "account_id": "ACC-1004",
+              "amount": 7008.08,
+              "discount_pct": 1.73,
+              "currency": "AUD",
+              "status": "open",
+              "vendor_notes": "Thanks for your business."
+            },
+            "http": 200,
+            "decision": "allowed",
+            "trace": "15c1695153814f8e5db5a6fd8dc74500",
+            "ms": 4189.4
+          },
+          "utc": "2026-11-07T21:11:28Z"
+        },
+        {
+          "id": "B4",
+          "expected": "200 allowed",
+          "actual": "200 allowed",
+          "status": "PASS",
+          "evidence": {
+            "invoice": "INV-000019",
+            "http": 200,
+            "decision": "allowed",
+            "trace": "7b129fc0177675ae5db5a6fd8dc74af2",
+            "ms": 374.0
+          },
+          "utc": "2026-11-07T21:11:29Z"
+        },
+        {
+          "id": "B5",
+          "expected": "403 TEMPORAL_VIOLATION",
+          "actual": "403 TEMPORAL_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "d9b253874b995dd65db5a6fd8dc74adb",
+            "ms": 78.0
+          },
+          "utc": "2026-11-07T21:11:29Z"
+        },
+        {
+          "id": "B6",
+          "expected": "403 BINDING_VIOLATION",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "13a01607c5688cf45db5a6fd8dc74144",
+            "ms": 82.5
+          },
+          "utc": "2026-11-07T21:11:29Z"
+        },
+        {
+          "id": "B7",
+          "expected": "403 BINDING_VIOLATION",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "78812e7a538879c25db5a6fd8dc74b0c",
+            "ms": 81.8
+          },
+          "utc": "2026-11-07T21:11:29Z"
+        },
+        {
+          "id": "B8",
+          "expected": "403 (BINDING_VIOLATION or ARG_OUT_OF_BOUNDS)",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "bound": {
+              "amount": 1808.78
+            },
+            "http": 403,
+            "decision": "denied",
+            "trace": "52e7615dddcbe5a65db5a6fd8dc744d4",
+            "ms": 82.2
+          },
+          "utc": "2026-11-07T21:11:29Z"
+        },
+        {
+          "id": "B9",
+          "expected": "403 TOOL_NOT_ALLOWED",
+          "actual": "403 TOOL_NOT_ALLOWED",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "ce5124b9b24f35bf5db5a6fd8dc7490e",
+            "ms": 86.2
+          },
+          "utc": "2026-11-07T21:11:29Z"
+        },
+        {
+          "id": "B10",
+          "expected": "200 then 403 REPLAY",
+          "actual": "200 then 403 REPLAY",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "8e0e7f77c52e77e35db5a6fd8dc74da0",
+            "ms": 87.5
+          },
+          "utc": "2026-11-07T21:11:30Z"
+        },
+        {
+          "id": "B11",
+          "expected": "403 TOKEN_MISSING",
+          "actual": "403 TOKEN_MISSING",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "35390e5e55f16a305db5a6fd8dc74fab",
+            "ms": 69.8
+          },
+          "utc": "2026-11-07T21:11:30Z"
+        },
+        {
+          "id": "B12",
+          "expected": "403 TOKEN_BAD_SIGNATURE",
+          "actual": "403 TOKEN_BAD_SIGNATURE",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "2cf4b932d247db865db5a6fd8dc7443a",
+            "ms": 66.3
+          },
+          "utc": "2026-11-07T21:11:30Z"
+        },
+        {
+          "id": "B13",
+          "expected": "403 TOKEN_BAD_SIGNATURE",
+          "actual": "403 TOKEN_BAD_SIGNATURE",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "275d96e9891d1a5e5db5a6fd8dc7456a",
+            "ms": 74.9
+          },
+          "utc": "2026-11-07T21:11:30Z"
+        },
+        {
+          "id": "B14",
+          "expected": "exactly 1 allowed approve_payment in gateway audit",
+          "actual": "1",
+          "status": "PASS",
+          "evidence": {
+            "jti": "53bfdf86e2ff49108569bb4af693d0f7"
+          },
+          "utc": "2026-11-07T21:11:36Z"
+        },
+        {
+          "id": "C1",
+          "expected": "tier 2; fresh < 0.9; reason mentions freshness",
+          "actual": "tier 2; fresh 0.706; reasons ['fresh=0.71<0.9']",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 0.706,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "score": 0.7383
+          },
+          "utc": "2026-11-07T21:11:55Z"
+        },
+        {
+          "id": "C2",
+          "expected": "tier 2; approve_payment escrow",
+          "actual": "tier 2; approve_payment escrow",
+          "status": "PASS",
+          "evidence": {
+            "token": "eyJhbGciOiJFUzI1NiIs...",
+            "http": 200,
+            "trace": "70df78375f3a75820d7cc10cc57b01fb",
+            "ms": 3238.9
+          },
+          "utc": "2026-11-07T21:11:59Z"
+        },
+        {
+          "id": "C3",
+          "expected": "200 decision escrow, escrow id",
+          "actual": "200 escrow id=8ffa68804585",
+          "status": "PASS",
+          "evidence": {
+            "invoice": "INV-000358",
+            "http": 200,
+            "decision": "escrow",
+            "trace": "5e24c7953489f7ff0934e40639e0ab89",
+            "ms": 134.4
+          },
+          "utc": "2026-11-07T21:11:59Z"
+        },
+        {
+          "id": "C4",
+          "expected": "item listed as pending",
+          "actual": "200; listed=True",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "f2a4fc08fff1954c0934e40639e0ad33",
+            "ms": 39.5
+          },
+          "utc": "2026-11-07T21:11:59Z"
+        },
+        {
+          "id": "C5",
+          "expected": "approver 1 -> status pending",
+          "actual": "200 {'status': 'pending', 'approvals': 1, 'required': 2}",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "91d229f0cb3967f70934e40639e0a359",
+            "ms": 88.7
+          },
+          "utc": "2026-11-07T21:11:59Z"
+        },
+        {
+          "id": "C6",
+          "expected": "409 DUPLICATE_APPROVER",
+          "actual": "409 DUPLICATE_APPROVER",
+          "status": "PASS",
+          "evidence": {
+            "http": 409,
+            "trace": "da290f5844cd02160934e40639e0a373",
+            "ms": 25.9
+          },
+          "utc": "2026-11-07T21:11:59Z"
+        },
+        {
+          "id": "C7",
+          "expected": "approver 2 -> executed",
+          "actual": "impersonation refused: cessToken\n    troubleshooter_url: https://console.cloud.google.com/iam-admin/troubleshooter/summary;errorId=CiQwMWExYjdkYS1hMzYwLTcyNGQtODE1Mi03MWM2NzRjYzlkNGYSAA%3D%3D\n  reason: IAM_PERMISSION_DENIED",
+          "status": "FAIL",
+          "evidence": {},
+          "utc": "2026-11-07T21:12:02Z"
+        },
+        {
+          "id": "C8",
+          "expected": "409 ESCROW_CLOSED",
+          "actual": "skipped: no second approver",
+          "status": "SKIP",
+          "evidence": {},
+          "utc": "2026-11-07T21:12:02Z"
+        },
+        {
+          "id": "C9",
+          "expected": "APPROVER_UNKNOWN or 401/403",
+          "actual": "403 Cloud Run",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "ms": 287.3
+          },
+          "utc": "2026-11-07T21:12:03Z"
+        },
+        {
+          "id": "C10",
+          "expected": "requester's own approval refused (SELF_APPROVAL)",
+          "actual": "200 pending",
+          "status": "FAIL",
+          "evidence": {
+            "requester": "<tester-google-account>",
+            "agent_id": "ap-agent",
+            "escrow_id": "2f145ca6a40e",
+            "http": 200,
+            "trace": "ef17622590a98f5d0934e40639e0a660",
+            "ms": 76.7
+          },
+          "utc": "2026-11-07T21:12:03Z"
+        },
+        {
+          "id": "C11",
+          "expected": "tier 1 after healthy reload",
+          "actual": "tier 1",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            }
+          },
+          "utc": "2026-11-07T21:12:27Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794085828.234069,
+        "images": {
+          "control": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v4",
+          "gateway": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v4",
+          "tools": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v4"
+        },
+        "B_jti": "53bfdf86e2ff49108569bb4af693d0f7",
+        "C_jti": "ead2deeb802c48ac87b9224e13f40f9d",
+        "C_end": 1794085923.384038,
+        "run_end": 1794085947.6379676
+      }
+    },
+    "gcp_d_v4": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "D": {
+          "PASS": 25,
+          "FAIL": 1,
+          "SKIP": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "D01h",
+          "expected": "uc01 ap_invoices healthy tier 1",
+          "actual": "tier 1 (age 18.2s, load took 22.9s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 1.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 18.2
+          },
+          "utc": "2026-11-07T21:13:37Z"
+        },
+        {
+          "id": "D01f",
+          "expected": "uc01 stale -> tier 2",
+          "actual": "tier 2 (age 5413.3s) ['fresh=0.71<0.9']",
+          "status": "PASS",
+          "evidence": {
+            "fault": {
+              "type": "stale",
+              "product": "ap_invoices",
+              "age_seconds": 5400
+            },
+            "tier": 2,
+            "score": 0.7375,
+            "vectors": {
+              "fresh": 0.7053,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "fresh=0.71<0.9"
+            ],
+            "age_s": 5413.3
+          },
+          "utc": "2026-11-07T21:14:02Z"
+        },
+        {
+          "id": "D02h",
+          "expected": "uc02 contractor_invoices healthy tier 1",
+          "actual": "tier 1 (age 16.4s, load took 24.7s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 1.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 16.4
+          },
+          "utc": "2026-11-07T21:14:51Z"
+        },
+        {
+          "id": "D02f",
+          "expected": "uc02 regenerate -> tier 3",
+          "actual": "tier 3 (age 9.2s) ['drift=0.00<0.5', 'poison=0.00<0.6']",
+          "status": "PASS",
+          "evidence": {
+            "fault": {
+              "type": "regenerate",
+              "product": "contractor_invoices",
+              "profile": "stress",
+              "rows": 300,
+              "seed": 21,
+              "start": 1000
+            },
+            "tier": 3,
+            "score": 0.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 0.0,
+              "poison": 0.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "drift=0.00<0.5",
+              "poison=0.00<0.6"
+            ],
+            "age_s": 9.2
+          },
+          "utc": "2026-11-07T21:15:11Z"
+        },
+        {
+          "id": "D03h",
+          "expected": "uc02 contractor_invoices healthy tier 1",
+          "actual": "tier 1 (age 16.2s, load took 24.0s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 1.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 16.2
+          },
+          "utc": "2026-11-07T21:16:03Z"
+        },
+        {
+          "id": "D03f",
+          "expected": "uc02 duplicate_cluster -> tier 3",
+          "actual": "tier 3 (age 6.8s) ['poison=0.00<0.6']",
+          "status": "PASS",
+          "evidence": {
+            "fault": {
+              "type": "duplicate_cluster",
+              "product": "contractor_invoices",
+              "template_row": 1,
+              "count": 30,
+              "id_column": "invoice_id",
+              "id_prefix": "CI-",
+              "id_start": 910000
+            },
+            "tier": 3,
+            "score": 0.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 0.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "poison=0.00<0.6"
+            ],
+            "age_s": 6.8
+          },
+          "utc": "2026-11-07T21:16:21Z"
+        },
+        {
+          "id": "D04h",
+          "expected": "uc03 lab_results healthy tier 1",
+          "actual": "tier 1 (age 14.0s, load took 22.7s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 0.9937,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 0.9684,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 14.0
+          },
+          "utc": "2026-11-07T21:17:11Z"
+        },
+        {
+          "id": "D04f",
+          "expected": "uc03 scale_column -> tier 3",
+          "actual": "tier 3 (age 7.2s) ['drift=0.00<0.5', 'poison=0.00<0.6', 'zero_tolerance:creatinine_unit:equals']",
+          "status": "PASS",
+          "evidence": {
+            "fault": {
+              "type": "scale_column",
+              "product": "lab_results",
+              "column": "creatinine",
+              "factor": 88.4,
+              "fraction": 0.3,
+              "set": {
+                "creatinine_unit": "umol/L"
+              }
+            },
+            "tier": 3,
+            "score": 0.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 0.9684,
+              "drift": 0.0,
+              "poison": 0.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "drift=0.00<0.5",
+              "poison=0.00<0.6",
+              "zero_tolerance:creatinine_unit:equals"
+            ],
+            "age_s": 7.2
+          },
+          "utc": "2026-11-07T21:17:30Z"
+        },
+        {
+          "id": "D05h",
+          "expected": "uc04 fx_ticks healthy tier 1",
+          "actual": "tier 1 (age 12.8s, load took 20.2s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 0.992,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 0.96,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 12.8
+          },
+          "utc": "2026-11-07T21:18:12Z"
+        },
+        {
+          "id": "D05f",
+          "expected": "uc04 wait 280s past SLA -> tier 3",
+          "actual": "tier 3 (age 295.8s) ['fresh=0.36<0.9']",
+          "status": "PASS",
+          "evidence": {
+            "fault": null,
+            "tier": 3,
+            "score": 0.348,
+            "vectors": {
+              "fresh": 0.3623,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 0.96,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "fresh=0.36<0.9"
+            ],
+            "age_s": 295.8
+          },
+          "utc": "2026-11-07T21:22:57Z"
+        },
+        {
+          "id": "D06h",
+          "expected": "uc05 vendor_bids healthy tier 1",
+          "actual": "tier 1 (age 15.8s, load took 23.5s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 1.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 15.8
+          },
+          "utc": "2026-11-07T21:23:25Z"
+        },
+        {
+          "id": "D06f",
+          "expected": "uc05 lineage -> tier 2",
+          "actual": "tier 2 (age 32.8s) ['lin=0.55<0.6']",
+          "status": "PASS",
+          "evidence": {
+            "fault": {
+              "type": "lineage",
+              "node": "approved_spec_repo",
+              "health": 0.55
+            },
+            "tier": 2,
+            "score": 0.8342,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 0.55,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "lin=0.55<0.6"
+            ],
+            "age_s": 32.8
+          },
+          "utc": "2026-11-07T21:23:40Z"
+        },
+        {
+          "id": "D07h",
+          "expected": "uc06 orders healthy tier 1",
+          "actual": "tier 1 (age 12.1s, load took 20.2s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 0.9575,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 0.9875,
+              "drift": 1.0,
+              "poison": 0.8,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 12.1
+          },
+          "utc": "2026-11-07T21:24:24Z"
+        },
+        {
+          "id": "D07f",
+          "expected": "uc06 no fault -> tier 1",
+          "actual": "tier 1 (age 14.4s) []",
+          "status": "PASS",
+          "evidence": {
+            "fault": null,
+            "tier": 1,
+            "score": 0.9575,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 0.9875,
+              "drift": 1.0,
+              "poison": 0.8,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 14.4
+          },
+          "utc": "2026-11-07T21:24:26Z"
+        },
+        {
+          "id": "D08h",
+          "expected": "uc07 credit_applications healthy tier 1",
+          "actual": "tier 1 (age 13.9s, load took 21.4s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 1.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 13.9
+          },
+          "utc": "2026-11-07T21:24:51Z"
+        },
+        {
+          "id": "D08f",
+          "expected": "uc07 set_value -> tier 3",
+          "actual": "tier 3 (age 6.5s) ['zero_tolerance:bureau_age_days:max']",
+          "status": "PASS",
+          "evidence": {
+            "fault": {
+              "type": "set_value",
+              "product": "credit_applications",
+              "where": {
+                "app_id": "LA-00030"
+              },
+              "set": {
+                "bureau_age_days": 45
+              }
+            },
+            "tier": 3,
+            "score": 0.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "zero_tolerance:bureau_age_days:max"
+            ],
+            "age_s": 6.5
+          },
+          "utc": "2026-11-07T21:25:07Z"
+        },
+        {
+          "id": "D09h",
+          "expected": "uc08 adverse_events healthy tier 1",
+          "actual": "tier 1 (age 14.7s, load took 22.3s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 0.992,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 0.96,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 14.7
+          },
+          "utc": "2026-11-07T21:25:54Z"
+        },
+        {
+          "id": "D09f",
+          "expected": "uc08 null_spike -> tier 3",
+          "actual": "tier 3 (age 7.3s) ['zero_tolerance:severity_code:not_null']",
+          "status": "PASS",
+          "evidence": {
+            "fault": {
+              "type": "null_spike",
+              "product": "adverse_events",
+              "column": "severity_code",
+              "fraction": 0.05
+            },
+            "tier": 3,
+            "score": 0.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 0.9863,
+              "drift": 1.0,
+              "poison": 0.96,
+              "comp_crit": 0.936
+            },
+            "reasons": [
+              "zero_tolerance:severity_code:not_null"
+            ],
+            "age_s": 7.3
+          },
+          "utc": "2026-11-07T21:26:11Z"
+        },
+        {
+          "id": "D10h",
+          "expected": "uc08 adverse_events healthy tier 1",
+          "actual": "tier 1 (age 14.1s, load took 22.0s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 0.992,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 0.96,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 14.1
+          },
+          "utc": "2026-11-07T21:26:55Z"
+        },
+        {
+          "id": "D10f",
+          "expected": "uc08 lineage -> tier 3",
+          "actual": "tier 3 (age 28.0s) ['lin=0.00<0.6']",
+          "status": "PASS",
+          "evidence": {
+            "fault": {
+              "type": "lineage",
+              "node": "cro_pipeline_v4",
+              "health": 0.0
+            },
+            "tier": 3,
+            "score": 0.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 0.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 0.96,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "lin=0.00<0.6"
+            ],
+            "age_s": 28.0
+          },
+          "utc": "2026-11-07T21:27:09Z"
+        },
+        {
+          "id": "D11h",
+          "expected": "uc09 scada_telemetry healthy tier 1",
+          "actual": "tier 3 (age 14.8s, load took 21.6s) ['fresh=0.26<0.9']",
+          "status": "FAIL",
+          "evidence": {
+            "tier": 3,
+            "score": 0.2434,
+            "vectors": {
+              "fresh": 0.2573,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "fresh=0.26<0.9"
+            ],
+            "age_s": 14.8
+          },
+          "utc": "2026-11-07T21:27:56Z"
+        },
+        {
+          "id": "D11f",
+          "expected": "uc09 wait 15s past SLA -> tier 3",
+          "actual": "tier 3 (age 33.2s) ['fresh=0.02<0.9']",
+          "status": "PASS",
+          "evidence": {
+            "fault": null,
+            "tier": 3,
+            "score": 0.0178,
+            "vectors": {
+              "fresh": 0.0199,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "fresh=0.02<0.9"
+            ],
+            "age_s": 33.2
+          },
+          "utc": "2026-11-07T21:28:14Z"
+        },
+        {
+          "id": "D12h",
+          "expected": "uc11 engine_telemetry healthy tier 1",
+          "actual": "tier 1 (age 15.1s, load took 22.1s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 1.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 15.1
+          },
+          "utc": "2026-11-07T21:28:39Z"
+        },
+        {
+          "id": "D12f",
+          "expected": "uc11 set_value -> tier 3",
+          "actual": "tier 3 (age 6.8s) ['drift=0.21<0.5', 'poison=0.00<0.6', 'zero_tolerance:vibration_ips:min']",
+          "status": "PASS",
+          "evidence": {
+            "fault": {
+              "type": "set_value",
+              "product": "engine_telemetry",
+              "where": {
+                "tail_number": "VH-QPA"
+              },
+              "set": {
+                "vibration_ips": 0.0
+              }
+            },
+            "tier": 3,
+            "score": 0.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 0.2075,
+              "poison": 0.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "drift=0.21<0.5",
+              "poison=0.00<0.6",
+              "zero_tolerance:vibration_ips:min"
+            ],
+            "age_s": 6.8
+          },
+          "utc": "2026-11-07T21:28:55Z"
+        },
+        {
+          "id": "D13h",
+          "expected": "uc12 benefit_claims healthy tier 1",
+          "actual": "tier 1 (age 14.4s, load took 21.8s) []",
+          "status": "PASS",
+          "evidence": {
+            "tier": 1,
+            "score": 1.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "age_s": 14.4
+          },
+          "utc": "2026-11-07T21:29:42Z"
+        },
+        {
+          "id": "D13f",
+          "expected": "uc12 set_value -> tier 3",
+          "actual": "tier 3 (age 6.1s) ['poison=0.00<0.6', 'zero_tolerance:income_source:not_in_source']",
+          "status": "PASS",
+          "evidence": {
+            "fault": {
+              "type": "set_value",
+              "product": "benefit_claims",
+              "fraction": 0.1,
+              "set": {
+                "income_source": "averaged_annual"
+              }
+            },
+            "tier": 3,
+            "score": 0.0,
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 0.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "poison=0.00<0.6",
+              "zero_tolerance:income_source:not_in_source"
+            ],
+            "age_s": 6.1
+          },
+          "utc": "2026-11-07T21:29:59Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794085986.2511766,
+        "phase_d": [
+          {
+            "id": "D01",
+            "uc": "uc01",
+            "product": "ap_invoices",
+            "healthy": {
+              "tier": 1,
+              "score": 1.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 18.2
+            },
+            "after": {
+              "tier": 2,
+              "score": 0.7375,
+              "vectors": {
+                "fresh": 0.7053,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "fresh=0.71<0.9"
+              ],
+              "age_s": 5413.3
+            },
+            "expected": 2
+          },
+          {
+            "id": "D02",
+            "uc": "uc02",
+            "product": "contractor_invoices",
+            "healthy": {
+              "tier": 1,
+              "score": 1.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 16.4
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 0.0,
+                "poison": 0.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "drift=0.00<0.5",
+                "poison=0.00<0.6"
+              ],
+              "age_s": 9.2
+            },
+            "expected": 3
+          },
+          {
+            "id": "D03",
+            "uc": "uc02",
+            "product": "contractor_invoices",
+            "healthy": {
+              "tier": 1,
+              "score": 1.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 16.2
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 0.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "poison=0.00<0.6"
+              ],
+              "age_s": 6.8
+            },
+            "expected": 3
+          },
+          {
+            "id": "D04",
+            "uc": "uc03",
+            "product": "lab_results",
+            "healthy": {
+              "tier": 1,
+              "score": 0.9937,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 0.9684,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 14.0
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 0.9684,
+                "drift": 0.0,
+                "poison": 0.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "drift=0.00<0.5",
+                "poison=0.00<0.6",
+                "zero_tolerance:creatinine_unit:equals"
+              ],
+              "age_s": 7.2
+            },
+            "expected": 3
+          },
+          {
+            "id": "D05",
+            "uc": "uc04",
+            "product": "fx_ticks",
+            "healthy": {
+              "tier": 1,
+              "score": 0.992,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 0.96,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 12.8
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.348,
+              "vectors": {
+                "fresh": 0.3623,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 0.96,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "fresh=0.36<0.9"
+              ],
+              "age_s": 295.8
+            },
+            "expected": 3
+          },
+          {
+            "id": "D06",
+            "uc": "uc05",
+            "product": "vendor_bids",
+            "healthy": {
+              "tier": 1,
+              "score": 1.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 15.8
+            },
+            "after": {
+              "tier": 2,
+              "score": 0.8342,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 0.55,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "lin=0.55<0.6"
+              ],
+              "age_s": 32.8
+            },
+            "expected": 2
+          },
+          {
+            "id": "D07",
+            "uc": "uc06",
+            "product": "orders",
+            "healthy": {
+              "tier": 1,
+              "score": 0.9575,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 0.9875,
+                "drift": 1.0,
+                "poison": 0.8,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 12.1
+            },
+            "after": {
+              "tier": 1,
+              "score": 0.9575,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 0.9875,
+                "drift": 1.0,
+                "poison": 0.8,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 14.4
+            },
+            "expected": 1
+          },
+          {
+            "id": "D08",
+            "uc": "uc07",
+            "product": "credit_applications",
+            "healthy": {
+              "tier": 1,
+              "score": 1.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 13.9
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "zero_tolerance:bureau_age_days:max"
+              ],
+              "age_s": 6.5
+            },
+            "expected": 3
+          },
+          {
+            "id": "D09",
+            "uc": "uc08",
+            "product": "adverse_events",
+            "healthy": {
+              "tier": 1,
+              "score": 0.992,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 0.96,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 14.7
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 0.9863,
+                "drift": 1.0,
+                "poison": 0.96,
+                "comp_crit": 0.936
+              },
+              "reasons": [
+                "zero_tolerance:severity_code:not_null"
+              ],
+              "age_s": 7.3
+            },
+            "expected": 3
+          },
+          {
+            "id": "D10",
+            "uc": "uc08",
+            "product": "adverse_events",
+            "healthy": {
+              "tier": 1,
+              "score": 0.992,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 0.96,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 14.1
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 0.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 0.96,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "lin=0.00<0.6"
+              ],
+              "age_s": 28.0
+            },
+            "expected": 3
+          },
+          {
+            "id": "D11",
+            "uc": "uc09",
+            "product": "scada_telemetry",
+            "healthy": {
+              "tier": 3,
+              "score": 0.2434,
+              "vectors": {
+                "fresh": 0.2573,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "fresh=0.26<0.9"
+              ],
+              "age_s": 14.8
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0178,
+              "vectors": {
+                "fresh": 0.0199,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "fresh=0.02<0.9"
+              ],
+              "age_s": 33.2
+            },
+            "expected": 3
+          },
+          {
+            "id": "D12",
+            "uc": "uc11",
+            "product": "engine_telemetry",
+            "healthy": {
+              "tier": 1,
+              "score": 1.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 15.1
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 0.2075,
+                "poison": 0.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "drift=0.21<0.5",
+                "poison=0.00<0.6",
+                "zero_tolerance:vibration_ips:min"
+              ],
+              "age_s": 6.8
+            },
+            "expected": 3
+          },
+          {
+            "id": "D13",
+            "uc": "uc12",
+            "product": "benefit_claims",
+            "healthy": {
+              "tier": 1,
+              "score": 1.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [],
+              "age_s": 14.4
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0,
+              "vectors": {
+                "fresh": 1.0,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 0.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "poison=0.00<0.6",
+                "zero_tolerance:income_source:not_in_source"
+              ],
+              "age_s": 6.1
+            },
+            "expected": 3
+          }
+        ],
+        "run_end": 1794087021.3263094
+      }
+    },
+    "gcp_e_v4": {
+      "checks": [
+        {
+          "id": "E1",
+          "expected": "every chain folder valid; pre-v3 objects listed as legacy",
+          "actual": "5/5 chains valid; 1 legacy object(s)",
+          "status": "PASS",
+          "evidence": {
+            "chains": {
+              "cene-control/20261107T124455Z-47dc103b": {
+                "valid": true,
+                "msg": "ok (2 events)",
+                "events": 2,
+                "checkpoints": 0
+              },
+              "cene-control/20261107T210803Z-694fdd8d": {
+                "valid": true,
+                "msg": "ok (4 events)",
+                "events": 4,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T124518Z-424109f4": {
+                "valid": true,
+                "msg": "ok (3 events)",
+                "events": 3,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T210816Z-0ded70d3": {
+                "valid": true,
+                "msg": "ok (13 events)",
+                "events": 13,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T211125Z-f1e9d86a": {
+                "valid": true,
+                "msg": "ok (18 events)",
+                "events": 18,
+                "checkpoints": 0
+              }
+            },
+            "legacy": [
+              "audit/000000000001-event.json"
+            ]
+          }
+        },
+        {
+          "id": "E2",
+          "expected": "valid: false naming seq 10",
+          "actual": "valid: False (hash mismatch at seq 10)",
+          "status": "PASS",
+          "evidence": {
+            "chain": "cene-gateway/20261107T211125Z-f1e9d86a",
+            "field": "agent"
+          }
+        },
+        {
+          "id": "E3",
+          "expected": "gateway SA cannot overwrite an object (403, create-only)",
+          "actual": "inferred from IAM: gateway bucket roles ['roles/storage.objectCreator']; objectCreator has delete=False; retention {'effectiveTime': '2026-11-07T12:21:54.003000+00:00', 'retentionPeriod': '2592000'}",
+          "status": "PASS",
+          "evidence": {
+            "method": "inferred (impersonation of the gateway SA not available)",
+            "retention": {
+              "effectiveTime": "2026-11-07T12:21:54.003000+00:00",
+              "retentionPeriod": "2592000"
+            }
+          }
+        },
+        {
+          "id": "E4",
+          "expected": "event counts in the B/C window = {'decision': 14, 'token_issued': 2, 'escrow_submitted': 2, 'escrow_approved': 2}",
+          "actual": "{'token_issued': 2, 'decision': 14, 'escrow_submitted': 2, 'escrow_approved': 2}",
+          "status": "PASS",
+          "evidence": {
+            "window": [
+              1794085854.0,
+              1794085925.0
+            ],
+            "diff": {}
+          }
+        }
+      ]
+    },
+    "gcp_f_v4": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "F": {
+          "PASS": 4,
+          "FAIL": 0,
+          "SKIP": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "F3",
+          "expected": "cold-start lookup_invoice (gateway + tools from zero)",
+          "actual": "17014 ms, 200",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "decision": "allowed",
+            "trace": "fe3d00eae9f02183c4f2ae041461322f",
+            "ms": 17013.6
+          },
+          "utc": "2026-11-07T21:33:00Z"
+        },
+        {
+          "id": "F1",
+          "expected": "100 warm lookups: p50/p95/p99 ms",
+          "actual": "{\"n\": 100, \"errors\": 0, \"p50\": 879.8, \"p95\": 1075.4, \"p99\": 1790.1, \"mean\": 891.5}",
+          "status": "PASS",
+          "evidence": {},
+          "utc": "2026-11-07T21:34:35Z"
+        },
+        {
+          "id": "F2",
+          "expected": "20 token issues: p50/p95 ms",
+          "actual": "{\"n\": 20, \"p50\": 3175.5, \"p95\": 4924.3, \"mean\": 3383.1}",
+          "status": "PASS",
+          "evidence": {},
+          "utc": "2026-11-07T21:35:42Z"
+        },
+        {
+          "id": "F4",
+          "expected": "BigQuery lookup alone: client and job ms",
+          "actual": "{\"n\": 20, \"client_p50\": 684.8, \"client_p95\": 10874.9, \"job_p50\": 197.0, \"job_p95\": 236.0}",
+          "status": "PASS",
+          "evidence": {},
+          "utc": "2026-11-07T21:36:12Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794087155.2115412,
+        "latency": {
+          "F3_cold_ms": 17013.6,
+          "F1": {
+            "n": 100,
+            "errors": 0,
+            "p50": 879.8,
+            "p95": 1075.4,
+            "p99": 1790.1,
+            "mean": 891.5
+          },
+          "F2": {
+            "n": 20,
+            "p50": 3175.5,
+            "p95": 4924.3,
+            "mean": 3383.1
+          },
+          "F4": {
+            "n": 20,
+            "client_p50": 684.8,
+            "client_p95": 10874.9,
+            "job_p50": 197.0,
+            "job_p95": 236.0
+          }
+        },
+        "run_end": 1794087372.4482243
+      }
+    },
+    "gcp_abc_v5": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "A": {
+          "PASS": 5,
+          "FAIL": 1,
+          "SKIP": 1
+        },
+        "B": {
+          "PASS": 14,
+          "FAIL": 0,
+          "SKIP": 0
+        },
+        "C": {
+          "PASS": 7,
+          "FAIL": 3,
+          "SKIP": 1
+        }
+      },
+      "checks": [
+        {
+          "id": "A1-c",
+          "expected": "200 {\"ok\":true,\"role\":\"control\"}",
+          "actual": "200 {\"ok\": true, \"role\": \"control\"}",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "4d052dfa12dd1196b8e739b3e897680a",
+            "ms": 631.7
+          },
+          "utc": "2026-11-07T21:37:59Z"
+        },
+        {
+          "id": "A1-g",
+          "expected": "200 {\"ok\":true,\"role\":\"gateway\"}",
+          "actual": "200 {\"ok\": true, \"role\": \"gateway\"}",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "c3b312204d49f592ca5b7b13a9830724",
+            "ms": 604.7
+          },
+          "utc": "2026-11-07T21:38:00Z"
+        },
+        {
+          "id": "A2-c",
+          "expected": "401/403 from Cloud Run (app not reached)",
+          "actual": "403 Cloud Run page",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "ms": 332.7
+          },
+          "utc": "2026-11-07T21:38:00Z"
+        },
+        {
+          "id": "A2-g",
+          "expected": "401/403 from Cloud Run (app not reached)",
+          "actual": "403 Cloud Run page",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "ms": 277.3
+          },
+          "utc": "2026-11-07T21:38:00Z"
+        },
+        {
+          "id": "A3",
+          "expected": "all three services on the same tag",
+          "actual": "{\"control\": \"v5\", \"gateway\": \"v5\", \"tools\": \"v5\"}",
+          "status": "PASS",
+          "evidence": {},
+          "utc": "2026-11-07T21:38:11Z"
+        },
+        {
+          "id": "A4",
+          "expected": "only gateway SA invokes tools; user gets 403",
+          "actual": "invokers=['serviceAccount:<cene-gateway-service-account>']; user call 200 (user project roles ['roles/owner'])",
+          "status": "FAIL",
+          "evidence": {
+            "user_project_roles": [
+              "roles/owner"
+            ],
+            "http": 200,
+            "trace": "fb999f3f93da7470fd979a93a62a65be",
+            "ms": 2750.6
+          },
+          "utc": "2026-11-07T21:38:20Z"
+        },
+        {
+          "id": "A4b",
+          "expected": "non-owner identity (agent SA) calling tools gets 403",
+          "actual": "impersonation refused: //console.cloud.google.com/iam-admin/troubleshooter/summary;errorId=CiQwMWExYjdmMi1jNDAzLTcxODUtOWMwZi0yYTM4NTM5NDk1MzMSAA%3D%3D\n  reason: IAM_PERMISSION_DENIED",
+          "status": "SKIP",
+          "evidence": {},
+          "utc": "2026-11-07T21:38:23Z"
+        },
+        {
+          "id": "B1",
+          "expected": "tier 1; fresh >= 0.9",
+          "actual": "tier 1; fresh 1.0; age 8s",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "score": 1.0
+          },
+          "utc": "2026-11-07T21:38:49Z"
+        },
+        {
+          "id": "B2",
+          "expected": "tier 1; lookup/approve direct; token < 4 KB; Merkle bindings",
+          "actual": "tier 1; tools {'lookup_invoice': 'direct', 'approve_payment': 'direct'}; 1658 B; 278 bindings",
+          "status": "PASS",
+          "evidence": {
+            "token": "eyJhbGciOiJFUzI1NiIs...",
+            "jti": "35d512e9f5094a49b93ab4cd36454a47",
+            "http": 200,
+            "trace": "ed63845ba75b8dca764b098b7901563e",
+            "ms": 3454.2
+          },
+          "utc": "2026-11-07T21:38:53Z"
+        },
+        {
+          "id": "B3",
+          "expected": "200; row with JSON types (amount number, nulls null)",
+          "actual": "200; amount float; string-nulls []",
+          "status": "PASS",
+          "evidence": {
+            "row": {
+              "invoice_id": "INV-000001",
+              "vendor_id": "V-004",
+              "account_id": "ACC-1004",
+              "amount": 7008.08,
+              "discount_pct": 1.73,
+              "currency": "AUD",
+              "status": "open",
+              "vendor_notes": "Thanks for your business."
+            },
+            "http": 200,
+            "decision": "allowed",
+            "trace": "936a6f24188447d610b3654ad2d65fb5",
+            "ms": 3105.9
+          },
+          "utc": "2026-11-07T21:38:56Z"
+        },
+        {
+          "id": "B4",
+          "expected": "200 allowed",
+          "actual": "200 allowed",
+          "status": "PASS",
+          "evidence": {
+            "invoice": "INV-000019",
+            "http": 200,
+            "decision": "allowed",
+            "trace": "4d7ecb4f8589dbb110b3654ad2d658d1",
+            "ms": 375.7
+          },
+          "utc": "2026-11-07T21:38:56Z"
+        },
+        {
+          "id": "B5",
+          "expected": "403 TEMPORAL_VIOLATION",
+          "actual": "403 TEMPORAL_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "ac17e3d90f93884710b3654ad2d65770",
+            "ms": 72.1
+          },
+          "utc": "2026-11-07T21:38:56Z"
+        },
+        {
+          "id": "B6",
+          "expected": "403 BINDING_VIOLATION",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "bef6be0dda0b91b510b3654ad2d6584a",
+            "ms": 65.3
+          },
+          "utc": "2026-11-07T21:38:56Z"
+        },
+        {
+          "id": "B7",
+          "expected": "403 BINDING_VIOLATION",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "5959b7b9fb3e650210b3654ad2d65553",
+            "ms": 96.5
+          },
+          "utc": "2026-11-07T21:38:57Z"
+        },
+        {
+          "id": "B8",
+          "expected": "403 (BINDING_VIOLATION or ARG_OUT_OF_BOUNDS)",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "bound": {
+              "amount": 1808.78
+            },
+            "http": 403,
+            "decision": "denied",
+            "trace": "2f3ffbbdd1ef32bd10b3654ad2d65dc0",
+            "ms": 72.6
+          },
+          "utc": "2026-11-07T21:38:57Z"
+        },
+        {
+          "id": "B9",
+          "expected": "403 TOOL_NOT_ALLOWED",
+          "actual": "403 TOOL_NOT_ALLOWED",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "d817d9dca3e509b910b3654ad2d65173",
+            "ms": 70.9
+          },
+          "utc": "2026-11-07T21:38:57Z"
+        },
+        {
+          "id": "B10",
+          "expected": "200 then 403 REPLAY",
+          "actual": "200 then 403 REPLAY",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "65f0b00b9d7730315227da175425fc27",
+            "ms": 85.2
+          },
+          "utc": "2026-11-07T21:38:58Z"
+        },
+        {
+          "id": "B11",
+          "expected": "403 TOKEN_MISSING",
+          "actual": "403 TOKEN_MISSING",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "ff6ffebd959b74245227da175425fff8",
+            "ms": 70.6
+          },
+          "utc": "2026-11-07T21:38:58Z"
+        },
+        {
+          "id": "B12",
+          "expected": "403 TOKEN_BAD_SIGNATURE",
+          "actual": "403 TOKEN_BAD_SIGNATURE",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "424689d3e5f30ad55227da175425f917",
+            "ms": 75.0
+          },
+          "utc": "2026-11-07T21:38:58Z"
+        },
+        {
+          "id": "B13",
+          "expected": "403 TOKEN_BAD_SIGNATURE",
+          "actual": "403 TOKEN_BAD_SIGNATURE",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "9da63e6a8b24fb135227da175425fdfc",
+            "ms": 71.3
+          },
+          "utc": "2026-11-07T21:38:58Z"
+        },
+        {
+          "id": "B14",
+          "expected": "exactly 1 allowed approve_payment in gateway audit",
+          "actual": "1",
+          "status": "PASS",
+          "evidence": {
+            "jti": "35d512e9f5094a49b93ab4cd36454a47"
+          },
+          "utc": "2026-11-07T21:39:03Z"
+        },
+        {
+          "id": "C1",
+          "expected": "tier 2; fresh < 0.9; reason mentions freshness",
+          "actual": "tier 2; fresh 0.7064; reasons ['fresh=0.71<0.9']",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 0.7064,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "score": 0.7388
+          },
+          "utc": "2026-11-07T21:39:23Z"
+        },
+        {
+          "id": "C2",
+          "expected": "tier 2; approve_payment escrow",
+          "actual": "tier 2; approve_payment escrow",
+          "status": "PASS",
+          "evidence": {
+            "token": "eyJhbGciOiJFUzI1NiIs...",
+            "http": 200,
+            "trace": "e7e14633b31dd0150bf7c4b3dc1a5e01",
+            "ms": 3234.9
+          },
+          "utc": "2026-11-07T21:39:27Z"
+        },
+        {
+          "id": "C3",
+          "expected": "200 decision escrow, escrow id",
+          "actual": "200 escrow id=621f07554c89",
+          "status": "PASS",
+          "evidence": {
+            "invoice": "INV-000358",
+            "http": 200,
+            "decision": "escrow",
+            "trace": "e0d0ecabaec08a74621d8b82d934a4ba",
+            "ms": 130.1
+          },
+          "utc": "2026-11-07T21:39:27Z"
+        },
+        {
+          "id": "C4",
+          "expected": "item listed as pending",
+          "actual": "200; listed=True",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "7926e5b32902a767621d8b82d934adb7",
+            "ms": 25.6
+          },
+          "utc": "2026-11-07T21:39:27Z"
+        },
+        {
+          "id": "C5",
+          "expected": "approver 1 -> status pending",
+          "actual": "409 {'error': 'SELF_APPROVAL'}",
+          "status": "FAIL",
+          "evidence": {
+            "http": 409,
+            "trace": "65783751ecc018f2621d8b82d934af78",
+            "ms": 28.0
+          },
+          "utc": "2026-11-07T21:39:27Z"
+        },
+        {
+          "id": "C6",
+          "expected": "409 DUPLICATE_APPROVER",
+          "actual": "409 SELF_APPROVAL",
+          "status": "FAIL",
+          "evidence": {
+            "http": 409,
+            "trace": "00ad451d7ea03ad8621d8b82d934ad47",
+            "ms": 24.7
+          },
+          "utc": "2026-11-07T21:39:27Z"
+        },
+        {
+          "id": "C7",
+          "expected": "approver 2 -> executed",
+          "actual": "impersonation refused: cessToken\n    troubleshooter_url: https://console.cloud.google.com/iam-admin/troubleshooter/summary;errorId=CiQwMWExYjdmMy1jOTQyLTc4YWItOTZiNS05MjFlZGUxODg5MDkSAA%3D%3D\n  reason: IAM_PERMISSION_DENIED",
+          "status": "FAIL",
+          "evidence": {},
+          "utc": "2026-11-07T21:39:30Z"
+        },
+        {
+          "id": "C8",
+          "expected": "409 ESCROW_CLOSED",
+          "actual": "skipped: no second approver",
+          "status": "SKIP",
+          "evidence": {},
+          "utc": "2026-11-07T21:39:30Z"
+        },
+        {
+          "id": "C9",
+          "expected": "APPROVER_UNKNOWN or 401/403",
+          "actual": "403 Cloud Run",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "ms": 325.2
+          },
+          "utc": "2026-11-07T21:39:30Z"
+        },
+        {
+          "id": "C10",
+          "expected": "requester's own approval refused (SELF_APPROVAL)",
+          "actual": "409 SELF_APPROVAL",
+          "status": "PASS",
+          "evidence": {
+            "requester": "<tester-google-account>",
+            "agent_id": "ap-agent",
+            "escrow_id": "eea5a1321d06",
+            "http": 409,
+            "trace": "af3c7b692b8864ad621d8b82d934a53f",
+            "ms": 23.6
+          },
+          "utc": "2026-11-07T21:39:31Z"
+        },
+        {
+          "id": "C11",
+          "expected": "tier 1 after healthy reload",
+          "actual": "tier 1",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            }
+          },
+          "utc": "2026-11-07T21:39:55Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794087475.7957199,
+        "images": {
+          "control": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v5",
+          "gateway": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v5",
+          "tools": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v5"
+        },
+        "B_jti": "35d512e9f5094a49b93ab4cd36454a47",
+        "C_jti": "00cc68897f284cc9a5a164747a2fbbb9",
+        "C_end": 1794087571.0616982,
+        "run_end": 1794087595.8211591
+      }
+    },
+    "gcp_e_v5": {
+      "checks": [
+        {
+          "id": "E1",
+          "expected": "every chain folder valid; pre-v3 objects listed as legacy",
+          "actual": "8/8 chains valid; 1 legacy object(s)",
+          "status": "PASS",
+          "evidence": {
+            "chains": {
+              "cene-control/20261107T124455Z-47dc103b": {
+                "valid": true,
+                "msg": "ok (2 events)",
+                "events": 2,
+                "checkpoints": 0
+              },
+              "cene-control/20261107T210803Z-694fdd8d": {
+                "valid": true,
+                "msg": "ok (25 events)",
+                "events": 25,
+                "checkpoints": 0
+              },
+              "cene-control/20261107T213844Z-bf9df5ad": {
+                "valid": true,
+                "msg": "ok (2 events)",
+                "events": 2,
+                "checkpoints": 1
+              },
+              "cene-gateway/20261107T124518Z-424109f4": {
+                "valid": true,
+                "msg": "ok (3 events)",
+                "events": 3,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T210816Z-0ded70d3": {
+                "valid": true,
+                "msg": "ok (13 events)",
+                "events": 13,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T211125Z-f1e9d86a": {
+                "valid": true,
+                "msg": "ok (18 events)",
+                "events": 18,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T213251Z-6f2e3910": {
+                "valid": true,
+                "msg": "ok (106 events)",
+                "events": 106,
+                "checkpoints": 1
+              },
+              "cene-gateway/20261107T213854Z-3f2002ad": {
+                "valid": true,
+                "msg": "ok (16 events)",
+                "events": 16,
+                "checkpoints": 1
+              }
+            },
+            "legacy": [
+              "audit/000000000001-event.json"
+            ]
+          }
+        },
+        {
+          "id": "E2",
+          "expected": "valid: false naming seq 54",
+          "actual": "valid: False (hash mismatch at seq 54)",
+          "status": "PASS",
+          "evidence": {
+            "chain": "cene-gateway/20261107T213251Z-6f2e3910",
+            "field": "agent"
+          }
+        },
+        {
+          "id": "E3",
+          "expected": "gateway SA cannot overwrite an object (403, create-only)",
+          "actual": "inferred from IAM: gateway bucket roles ['roles/storage.objectCreator']; objectCreator has delete=False; retention {'effectiveTime': '2026-11-07T12:21:54.003000+00:00', 'retentionPeriod': '2592000'}",
+          "status": "PASS",
+          "evidence": {
+            "method": "inferred (impersonation of the gateway SA not available)",
+            "retention": {
+              "effectiveTime": "2026-11-07T12:21:54.003000+00:00",
+              "retentionPeriod": "2592000"
+            }
+          }
+        },
+        {
+          "id": "E4",
+          "expected": "event counts in the B/C window = {'decision': 14, 'token_issued': 2, 'escrow_submitted': 2}",
+          "actual": "{'token_issued': 2, 'decision': 14, 'escrow_submitted': 2}",
+          "status": "PASS",
+          "evidence": {
+            "window": [
+              1794087503.0,
+              1794087573.0
+            ],
+            "diff": {}
+          }
+        }
+      ]
+    },
+    "gcp_a_v5_agent": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "A": {
+          "PASS": 6,
+          "FAIL": 1,
+          "SKIP": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "A1-c",
+          "expected": "200 {\"ok\":true,\"role\":\"control\"}",
+          "actual": "200 {\"ok\": true, \"role\": \"control\"}",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "f314e12fe8b0afa79e48f28980d2351d",
+            "ms": 611.8
+          },
+          "utc": "2026-11-07T21:52:40Z"
+        },
+        {
+          "id": "A1-g",
+          "expected": "200 {\"ok\":true,\"role\":\"gateway\"}",
+          "actual": "200 {\"ok\": true, \"role\": \"gateway\"}",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "50a4cd2d16c8f917f8e229ff131bd395",
+            "ms": 598.4
+          },
+          "utc": "2026-11-07T21:52:41Z"
+        },
+        {
+          "id": "A2-c",
+          "expected": "401/403 from Cloud Run (app not reached)",
+          "actual": "403 Cloud Run page",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "ms": 342.0
+          },
+          "utc": "2026-11-07T21:52:41Z"
+        },
+        {
+          "id": "A2-g",
+          "expected": "401/403 from Cloud Run (app not reached)",
+          "actual": "403 Cloud Run page",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "ms": 306.6
+          },
+          "utc": "2026-11-07T21:52:41Z"
+        },
+        {
+          "id": "A3",
+          "expected": "all three services on the same tag",
+          "actual": "{\"control\": \"v5\", \"gateway\": \"v5\", \"tools\": \"v5\"}",
+          "status": "PASS",
+          "evidence": {},
+          "utc": "2026-11-07T21:52:53Z"
+        },
+        {
+          "id": "A4",
+          "expected": "only gateway SA invokes tools; user gets 403",
+          "actual": "invokers=['serviceAccount:<cene-gateway-service-account>']; user call 200 (user project roles ['roles/owner'])",
+          "status": "FAIL",
+          "evidence": {
+            "user_project_roles": [
+              "roles/owner"
+            ],
+            "http": 200,
+            "trace": "5cb56015902a357672dc5604e1e72097",
+            "ms": 1727.8
+          },
+          "utc": "2026-11-07T21:53:03Z"
+        },
+        {
+          "id": "A4b",
+          "expected": "non-owner identity (agent SA) calling tools gets 403",
+          "actual": "403",
+          "status": "PASS",
+          "evidence": {
+            "caller": "<cene-agent-service-account>",
+            "http": 403,
+            "ms": 30.3
+          },
+          "utc": "2026-11-07T21:53:07Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794088357.0956204,
+        "images": {
+          "control": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v5",
+          "gateway": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v5",
+          "tools": "australia-southeast2-docker.pkg.dev/<gcp-project-id>/cene/cene:v5"
+        },
+        "run_end": 1794088387.8515077
+      }
+    },
+    "gcp_c_v4gw_agent": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "C": {
+          "PASS": 10,
+          "FAIL": 1,
+          "SKIP": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "C1",
+          "expected": "tier 2; fresh < 0.9; reason mentions freshness",
+          "actual": "tier 2; fresh 0.7058; reasons ['fresh=0.71<0.9']",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 0.7058,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "score": 0.7381
+          },
+          "utc": "2026-11-07T21:54:20Z"
+        },
+        {
+          "id": "C2",
+          "expected": "tier 2; approve_payment escrow",
+          "actual": "tier 2; approve_payment escrow",
+          "status": "PASS",
+          "evidence": {
+            "token": "eyJhbGciOiJFUzI1NiIs...",
+            "http": 200,
+            "trace": "8b0790ddeb63a2223b7f98477edb8278",
+            "ms": 4699.1
+          },
+          "utc": "2026-11-07T21:54:25Z"
+        },
+        {
+          "id": "C3",
+          "expected": "200 decision escrow, escrow id",
+          "actual": "200 escrow id=ed17bb74586b",
+          "status": "PASS",
+          "evidence": {
+            "invoice": "INV-000358",
+            "http": 200,
+            "decision": "escrow",
+            "trace": "ef73382475c562a6bc79304b79b32f1b",
+            "ms": 2603.9
+          },
+          "utc": "2026-11-07T21:54:27Z"
+        },
+        {
+          "id": "C4",
+          "expected": "item listed as pending",
+          "actual": "200; listed=True",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "a627f9c11c948ac5bc79304b79b3243d",
+            "ms": 25.2
+          },
+          "utc": "2026-11-07T21:54:28Z"
+        },
+        {
+          "id": "C5",
+          "expected": "approver 1 -> status pending",
+          "actual": "200 {'status': 'pending', 'approvals': 1, 'required': 2}",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "c1a0a061ae517484bc79304b79b3216b",
+            "ms": 74.8
+          },
+          "utc": "2026-11-07T21:54:28Z"
+        },
+        {
+          "id": "C6",
+          "expected": "409 DUPLICATE_APPROVER",
+          "actual": "409 DUPLICATE_APPROVER",
+          "status": "PASS",
+          "evidence": {
+            "http": 409,
+            "trace": "efbd2a8575984bd7bc79304b79b32a5e",
+            "ms": 24.2
+          },
+          "utc": "2026-11-07T21:54:28Z"
+        },
+        {
+          "id": "C7",
+          "expected": "approver 2 -> status executed",
+          "actual": "200 executed",
+          "status": "PASS",
+          "evidence": {
+            "approver": "<cene-agent-service-account>",
+            "http": 200,
+            "trace": "5a16790d86884f26bc79304b79b3227f",
+            "ms": 447.8
+          },
+          "utc": "2026-11-07T21:54:32Z"
+        },
+        {
+          "id": "C8",
+          "expected": "409 ESCROW_CLOSED",
+          "actual": "409 ESCROW_CLOSED",
+          "status": "PASS",
+          "evidence": {
+            "http": 409,
+            "trace": "cd0297291697dd43fa4e8d2b4a8dca61",
+            "ms": 24.0
+          },
+          "utc": "2026-11-07T21:54:32Z"
+        },
+        {
+          "id": "C9",
+          "expected": "APPROVER_UNKNOWN or 401/403",
+          "actual": "403 Cloud Run",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "ms": 341.7
+          },
+          "utc": "2026-11-07T21:54:32Z"
+        },
+        {
+          "id": "C10",
+          "expected": "requester's own approval refused (SELF_APPROVAL)",
+          "actual": "200 pending",
+          "status": "FAIL",
+          "evidence": {
+            "requester": "<tester-google-account>",
+            "agent_id": "ap-agent",
+            "escrow_id": "d5abc3876ab4",
+            "http": 200,
+            "trace": "5114505d7b2d67cffa4e8d2b4a8dc040",
+            "ms": 71.9
+          },
+          "utc": "2026-11-07T21:54:33Z"
+        },
+        {
+          "id": "C11",
+          "expected": "tier 1 after healthy reload",
+          "actual": "tier 1",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            }
+          },
+          "utc": "2026-11-07T21:54:58Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794088435.5339847,
+        "C_jti": "93f387b7f2224ebe9b4280f215cef48c",
+        "C_end": 1794088473.185745,
+        "run_end": 1794088498.3903887
+      }
+    },
+    "gcp_e_c2": {
+      "checks": [
+        {
+          "id": "E1",
+          "expected": "every chain folder valid; pre-v3 objects listed as legacy",
+          "actual": "10/10 chains valid; 1 legacy object(s)",
+          "status": "PASS",
+          "evidence": {
+            "chains": {
+              "cene-control/20261107T124455Z-47dc103b": {
+                "valid": true,
+                "msg": "ok (2 events)",
+                "events": 2,
+                "checkpoints": 0
+              },
+              "cene-control/20261107T210803Z-694fdd8d": {
+                "valid": true,
+                "msg": "ok (25 events)",
+                "events": 25,
+                "checkpoints": 0
+              },
+              "cene-control/20261107T213844Z-bf9df5ad": {
+                "valid": true,
+                "msg": "ok (2 events)",
+                "events": 2,
+                "checkpoints": 1
+              },
+              "cene-control/20261107T214355Z-1188d1ce": {
+                "valid": true,
+                "msg": "ok (4 events)",
+                "events": 4,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T124518Z-424109f4": {
+                "valid": true,
+                "msg": "ok (3 events)",
+                "events": 3,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T210816Z-0ded70d3": {
+                "valid": true,
+                "msg": "ok (13 events)",
+                "events": 13,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T211125Z-f1e9d86a": {
+                "valid": true,
+                "msg": "ok (18 events)",
+                "events": 18,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T213251Z-6f2e3910": {
+                "valid": true,
+                "msg": "ok (106 events)",
+                "events": 106,
+                "checkpoints": 1
+              },
+              "cene-gateway/20261107T213854Z-3f2002ad": {
+                "valid": true,
+                "msg": "ok (16 events)",
+                "events": 16,
+                "checkpoints": 1
+              },
+              "cene-gateway/20261107T215426Z-b218f29c": {
+                "valid": true,
+                "msg": "ok (8 events)",
+                "events": 8,
+                "checkpoints": 0
+              }
+            },
+            "legacy": [
+              "audit/000000000001-event.json"
+            ]
+          }
+        },
+        {
+          "id": "E2",
+          "expected": "valid: false naming seq 54",
+          "actual": "valid: False (hash mismatch at seq 54)",
+          "status": "PASS",
+          "evidence": {
+            "chain": "cene-gateway/20261107T213251Z-6f2e3910",
+            "field": "agent"
+          }
+        },
+        {
+          "id": "E3",
+          "expected": "gateway SA cannot overwrite an object (403, create-only)",
+          "actual": "inferred from IAM: gateway bucket roles ['roles/storage.objectCreator']; objectCreator has delete=False; retention {'effectiveTime': '2026-11-07T12:21:54.003000+00:00', 'retentionPeriod': '2592000'}",
+          "status": "PASS",
+          "evidence": {
+            "method": "inferred (impersonation of the gateway SA not available)",
+            "retention": {
+              "effectiveTime": "2026-11-07T12:21:54.003000+00:00",
+              "retentionPeriod": "2592000"
+            }
+          }
+        },
+        {
+          "id": "E4",
+          "expected": "event counts in the B/C window = {'decision': 2, 'token_issued': 1, 'escrow_submitted': 2, 'escrow_approved': 3, 'escrow_executed': 1}",
+          "actual": "{'token_issued': 1, 'escrow_submitted': 2, 'decision': 2, 'escrow_approved': 3, 'escrow_executed': 1}",
+          "status": "PASS",
+          "evidence": {
+            "window": [
+              1794088435.0,
+              1794088475.0
+            ],
+            "diff": {}
+          }
+        }
+      ]
+    },
+    "gcp_c3_v5": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "C": {
+          "PASS": 11,
+          "FAIL": 0,
+          "SKIP": 0
+        },
+        "E": {
+          "PASS": 1,
+          "FAIL": 0,
+          "SKIP": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "C1",
+          "expected": "tier 2; fresh < 0.9",
+          "actual": "tier 2; fresh 0.7054; reasons ['fresh=0.71<0.9']",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 0.7054,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "score": 0.7376
+          },
+          "utc": "2026-11-08T01:46:57Z"
+        },
+        {
+          "id": "C2",
+          "expected": "requested by cene-agent: tier 2; approve_payment escrow; req_by = <cene-agent-service-account>",
+          "actual": "tier 2; approve_payment escrow; req_by <cene-agent-service-account>",
+          "status": "PASS",
+          "evidence": {
+            "token": "eyJhbGciOiJFUzI1NiIs...",
+            "jti": "2bfce3af2d594a10b6be7f11ca733355",
+            "http": 200,
+            "trace": "8690fcfaa542ec7e4e650257690a4144",
+            "ms": 3686.9
+          },
+          "utc": "2026-11-08T01:47:13Z"
+        },
+        {
+          "id": "C3",
+          "expected": "decision escrow, escrow id",
+          "actual": "200 escrow id=ad219acad85d",
+          "status": "PASS",
+          "evidence": {
+            "invoice": "INV-000358",
+            "caller": "<cene-agent-service-account>",
+            "http": 200,
+            "decision": "escrow",
+            "trace": "349f68a23cf46b4a80764b44f9e15702",
+            "ms": 2687.3
+          },
+          "utc": "2026-11-08T01:47:15Z"
+        },
+        {
+          "id": "C4",
+          "expected": "item listed as pending",
+          "actual": "200; listed=True",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "trace": "c8ce9ded26b502d8a085a6831d8a8fb7",
+            "ms": 49.2
+          },
+          "utc": "2026-11-08T01:47:15Z"
+        },
+        {
+          "id": "C5",
+          "expected": "approve as user: status pending",
+          "actual": "200 pending",
+          "status": "PASS",
+          "evidence": {
+            "approver": "<tester-google-account>",
+            "http": 200,
+            "trace": "762de4117e65052aa085a6831d8a8745",
+            "ms": 80.6
+          },
+          "utc": "2026-11-08T01:47:16Z"
+        },
+        {
+          "id": "C6",
+          "expected": "approve as user again: 409 DUPLICATE_APPROVER",
+          "actual": "409 DUPLICATE_APPROVER",
+          "status": "PASS",
+          "evidence": {
+            "approver": "<tester-google-account>",
+            "http": 409,
+            "trace": "330e0144cfa16b0aa085a6831d8a8772",
+            "ms": 24.2
+          },
+          "utc": "2026-11-08T01:47:16Z"
+        },
+        {
+          "id": "C6b",
+          "expected": "approve as cene-agent (requester): 409 SELF_APPROVAL",
+          "actual": "409 SELF_APPROVAL",
+          "status": "PASS",
+          "evidence": {
+            "approver": "<cene-agent-service-account>",
+            "http": 409,
+            "trace": "e304d3ebcd2e62dba085a6831d8a8570",
+            "ms": 28.0
+          },
+          "utc": "2026-11-08T01:47:16Z"
+        },
+        {
+          "id": "C7",
+          "expected": "approve as cene-approver: status executed",
+          "actual": "200 executed",
+          "status": "PASS",
+          "evidence": {
+            "approver": "<cene-approver-service-account>",
+            "http": 200,
+            "trace": "8a14831eccb83371a085a6831d8a879f",
+            "ms": 8078.0
+          },
+          "utc": "2026-11-08T01:47:24Z"
+        },
+        {
+          "id": "C8",
+          "expected": "approve again: 409 ESCROW_CLOSED",
+          "actual": "409 ESCROW_CLOSED",
+          "status": "PASS",
+          "evidence": {
+            "approver": "<cene-approver-service-account>",
+            "http": 409,
+            "trace": "6970604d5f76fda8e7928b0bffbf4d15",
+            "ms": 33.0
+          },
+          "utc": "2026-11-08T01:47:24Z"
+        },
+        {
+          "id": "C9",
+          "expected": "no ID token: 401/403",
+          "actual": "403 Cloud Run",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "ms": 290.2
+          },
+          "utc": "2026-11-08T01:47:24Z"
+        },
+        {
+          "id": "E4a",
+          "expected": "escrow_executed lists exactly ['<tester-google-account>', '<cene-approver-service-account>']",
+          "actual": "['<tester-google-account>', '<cene-approver-service-account>'] (1 event(s))",
+          "status": "PASS",
+          "evidence": {
+            "escrow_id": "ad219acad85d"
+          },
+          "utc": "2026-11-08T01:47:29Z"
+        },
+        {
+          "id": "C11",
+          "expected": "reload healthy: tier 1",
+          "actual": "tier 1",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            }
+          },
+          "utc": "2026-11-08T01:47:56Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794102361.6493952,
+        "C3_jti": "2bfce3af2d594a10b6be7f11ca733355",
+        "C3_escrow_id": "ad219acad85d",
+        "C3_end": 1794102444.5128174,
+        "run_end": 1794102476.2069523
+      }
+    },
+    "gcp_e_c3_v5": {
+      "checks": [
+        {
+          "id": "E1",
+          "expected": "every chain folder valid; pre-v3 objects listed as legacy",
+          "actual": "12/12 chains valid; 1 legacy object(s)",
+          "status": "PASS",
+          "evidence": {
+            "chains": {
+              "cene-control/20261107T124455Z-47dc103b": {
+                "valid": true,
+                "msg": "ok (2 events)",
+                "events": 2,
+                "checkpoints": 0
+              },
+              "cene-control/20261107T210803Z-694fdd8d": {
+                "valid": true,
+                "msg": "ok (25 events)",
+                "events": 25,
+                "checkpoints": 0
+              },
+              "cene-control/20261107T213844Z-bf9df5ad": {
+                "valid": true,
+                "msg": "ok (2 events)",
+                "events": 2,
+                "checkpoints": 1
+              },
+              "cene-control/20261107T214355Z-1188d1ce": {
+                "valid": true,
+                "msg": "ok (4 events)",
+                "events": 4,
+                "checkpoints": 1
+              },
+              "cene-control/20261108T014652Z-1314da5c": {
+                "valid": true,
+                "msg": "ok (1 events)",
+                "events": 1,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T124518Z-424109f4": {
+                "valid": true,
+                "msg": "ok (3 events)",
+                "events": 3,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T210816Z-0ded70d3": {
+                "valid": true,
+                "msg": "ok (13 events)",
+                "events": 13,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T211125Z-f1e9d86a": {
+                "valid": true,
+                "msg": "ok (18 events)",
+                "events": 18,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261107T213251Z-6f2e3910": {
+                "valid": true,
+                "msg": "ok (106 events)",
+                "events": 106,
+                "checkpoints": 1
+              },
+              "cene-gateway/20261107T213854Z-3f2002ad": {
+                "valid": true,
+                "msg": "ok (16 events)",
+                "events": 16,
+                "checkpoints": 1
+              },
+              "cene-gateway/20261107T215426Z-b218f29c": {
+                "valid": true,
+                "msg": "ok (8 events)",
+                "events": 8,
+                "checkpoints": 0
+              },
+              "cene-gateway/20261108T014716Z-39b0d5e8": {
+                "valid": true,
+                "msg": "ok (5 events)",
+                "events": 5,
+                "checkpoints": 0
+              }
+            },
+            "legacy": [
+              "audit/000000000001-event.json"
+            ]
+          }
+        },
+        {
+          "id": "E2",
+          "expected": "valid: false naming seq 54",
+          "actual": "valid: False (hash mismatch at seq 54)",
+          "status": "PASS",
+          "evidence": {
+            "chain": "cene-gateway/20261107T213251Z-6f2e3910",
+            "field": "agent"
+          }
+        },
+        {
+          "id": "E3",
+          "expected": "gateway SA cannot overwrite an object (403, create-only)",
+          "actual": "inferred from IAM: gateway bucket roles ['roles/storage.objectCreator']; objectCreator has delete=False; retention {'effectiveTime': '2026-11-07T12:21:54.003000+00:00', 'retentionPeriod': '2592000'}",
+          "status": "PASS",
+          "evidence": {
+            "method": "inferred (impersonation of the gateway SA not available)",
+            "retention": {
+              "effectiveTime": "2026-11-07T12:21:54.003000+00:00",
+              "retentionPeriod": "2592000"
+            }
+          }
+        },
+        {
+          "id": "E4",
+          "expected": "event counts in the B/C window = {'token_issued': 1, 'decision': 1, 'escrow_submitted': 1, 'escrow_approved': 2, 'escrow_executed': 1}",
+          "actual": "{'token_issued': 1, 'escrow_submitted': 1, 'decision': 1, 'escrow_approved': 2, 'escrow_executed': 1}",
+          "status": "PASS",
+          "evidence": {
+            "window": [
+              1794102403.0,
+              1794102446.0
+            ],
+            "diff": {}
+          }
+        }
+      ]
+    },
+    "gcp_fc_v6": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "F": {
+          "PASS": 3,
+          "FAIL": 1,
+          "SKIP": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "FC1",
+          "expected": "lookup_invoice -> 403 STATE_UNAVAILABLE in < 3 s",
+          "actual": "403 STATE_UNAVAILABLE in 3979 ms",
+          "status": "FAIL",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "78a95429f8640eb33f89056cd2e94b97",
+            "ms": 3978.9
+          },
+          "utc": "2026-11-08T02:15:02Z"
+        },
+        {
+          "id": "FC2",
+          "expected": "approve_payment (valid binding) -> 403 STATE_UNAVAILABLE; no call reaches cene-tools",
+          "actual": "403 STATE_UNAVAILABLE in 1078 ms; cene-tools requests in window: 0",
+          "status": "PASS",
+          "evidence": {
+            "invoice": "INV-000358",
+            "http": 403,
+            "decision": "denied",
+            "trace": "a72fa4e6f1e92a033f89056cd2e948d7",
+            "ms": 1078.1,
+            "tools_requests_in_window": 0
+          },
+          "utc": "2026-11-08T02:15:03Z"
+        },
+        {
+          "id": "FC3",
+          "expected": "10 calls in a row all denied; median and max time to deny",
+          "actual": "10/10 denied; median 1079 ms, max 1094 ms",
+          "status": "PASS",
+          "evidence": {
+            "median_ms": 1079.0,
+            "max_ms": 1094.3
+          },
+          "utc": "2026-11-08T02:15:14Z"
+        },
+        {
+          "id": "FC4",
+          "expected": "12 decision events, all denied STATE_UNAVAILABLE",
+          "actual": "12 STATE_UNAVAILABLE, 0 other",
+          "status": "PASS",
+          "evidence": {
+            "audit_prefix": "audit/cene-gateway-failclosed/"
+          },
+          "utc": "2026-11-08T02:16:14Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794104079.9802594,
+        "fc3_ms": [
+          1085.0,
+          1079.6,
+          1094.3,
+          1082.6,
+          1077.3,
+          1077.3,
+          1078.3,
+          1073.4,
+          1075.8,
+          1081.8
+        ],
+        "run_end": 1794104174.8307593
+      }
+    },
+    "gcp_b_v6": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "B": {
+          "PASS": 14,
+          "FAIL": 0,
+          "SKIP": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "B1",
+          "expected": "tier 1; fresh >= 0.9",
+          "actual": "tier 1; fresh 1.0; age 13s",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "score": 1.0
+          },
+          "utc": "2026-11-08T02:22:25Z"
+        },
+        {
+          "id": "B2",
+          "expected": "tier 1; lookup/approve direct; token < 4 KB; Merkle bindings",
+          "actual": "tier 1; tools {'lookup_invoice': 'direct', 'approve_payment': 'direct'}; 1658 B; 278 bindings",
+          "status": "PASS",
+          "evidence": {
+            "token": "eyJhbGciOiJFUzI1NiIs...",
+            "jti": "4745fa18127d4f138884761c7a84e144",
+            "http": 200,
+            "trace": "d499f16eea1b7404cb01fb0e615798fa",
+            "ms": 3827.6
+          },
+          "utc": "2026-11-08T02:22:29Z"
+        },
+        {
+          "id": "B3",
+          "expected": "200; row with JSON types (amount number, nulls null)",
+          "actual": "200; amount float; string-nulls []",
+          "status": "PASS",
+          "evidence": {
+            "row": {
+              "invoice_id": "INV-000001",
+              "vendor_id": "V-004",
+              "account_id": "ACC-1004",
+              "amount": 7008.08,
+              "discount_pct": 1.73,
+              "currency": "AUD",
+              "status": "open",
+              "vendor_notes": "Thanks for your business."
+            },
+            "http": 200,
+            "decision": "allowed",
+            "trace": "befc04262c90840be7b8c4eab71c7147",
+            "ms": 5269.4
+          },
+          "utc": "2026-11-08T02:22:34Z"
+        },
+        {
+          "id": "B4",
+          "expected": "200 allowed",
+          "actual": "200 allowed",
+          "status": "PASS",
+          "evidence": {
+            "invoice": "INV-000019",
+            "http": 200,
+            "decision": "allowed",
+            "trace": "fc97943502e48ed6e7b8c4eab71c76d5",
+            "ms": 411.6
+          },
+          "utc": "2026-11-08T02:22:34Z"
+        },
+        {
+          "id": "B5",
+          "expected": "403 TEMPORAL_VIOLATION",
+          "actual": "403 TEMPORAL_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "cfb597158369df9de7b8c4eab71c75b7",
+            "ms": 70.9
+          },
+          "utc": "2026-11-08T02:22:34Z"
+        },
+        {
+          "id": "B6",
+          "expected": "403 BINDING_VIOLATION",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "a8449f20fbd34133e7b8c4eab71c7f8d",
+            "ms": 80.8
+          },
+          "utc": "2026-11-08T02:22:34Z"
+        },
+        {
+          "id": "B7",
+          "expected": "403 BINDING_VIOLATION",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "7b34d08a38d9819ee7b8c4eab71c7581",
+            "ms": 88.3
+          },
+          "utc": "2026-11-08T02:22:35Z"
+        },
+        {
+          "id": "B8",
+          "expected": "403 (BINDING_VIOLATION or ARG_OUT_OF_BOUNDS)",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "bound": {
+              "amount": 1808.78
+            },
+            "http": 403,
+            "decision": "denied",
+            "trace": "4935574576f1e9d20ec0ab025d35f5e4",
+            "ms": 73.9
+          },
+          "utc": "2026-11-08T02:22:35Z"
+        },
+        {
+          "id": "B9",
+          "expected": "403 TOOL_NOT_ALLOWED",
+          "actual": "403 TOOL_NOT_ALLOWED",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "89dbcff0b57852250ec0ab025d35fc2d",
+            "ms": 69.6
+          },
+          "utc": "2026-11-08T02:22:35Z"
+        },
+        {
+          "id": "B10",
+          "expected": "200 then 403 REPLAY",
+          "actual": "200 then 403 REPLAY",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "320f9547ae80d9700ec0ab025d35f806",
+            "ms": 74.4
+          },
+          "utc": "2026-11-08T02:22:36Z"
+        },
+        {
+          "id": "B11",
+          "expected": "403 TOKEN_MISSING",
+          "actual": "403 TOKEN_MISSING",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "376d0d03c022c9950ec0ab025d35fffa",
+            "ms": 68.4
+          },
+          "utc": "2026-11-08T02:22:36Z"
+        },
+        {
+          "id": "B12",
+          "expected": "403 TOKEN_BAD_SIGNATURE",
+          "actual": "403 TOKEN_BAD_SIGNATURE",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "82561d3ff3b3d5c90ec0ab025d35fcde",
+            "ms": 70.2
+          },
+          "utc": "2026-11-08T02:22:36Z"
+        },
+        {
+          "id": "B13",
+          "expected": "403 TOKEN_BAD_SIGNATURE",
+          "actual": "403 TOKEN_BAD_SIGNATURE",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "2ba5c3c1dd3461cd0ec0ab025d35fe37",
+            "ms": 74.6
+          },
+          "utc": "2026-11-08T02:22:36Z"
+        },
+        {
+          "id": "B14",
+          "expected": "exactly 1 allowed approve_payment in gateway audit",
+          "actual": "1",
+          "status": "PASS",
+          "evidence": {
+            "jti": "4745fa18127d4f138884761c7a84e144"
+          },
+          "utc": "2026-11-08T02:22:42Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794104508.3622751,
+        "B_jti": "4745fa18127d4f138884761c7a84e144",
+        "run_end": 1794104562.393157
+      }
+    },
+    "gcp_d11_v6_run1": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "D": {
+          "PASS": 1,
+          "FAIL": 1,
+          "SKIP": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "D11h",
+          "expected": "uc09 scada_telemetry healthy tier 1",
+          "actual": "tier 3 (age 9.3s, load took 20.8s) ['fresh=0.55<0.9']",
+          "status": "FAIL",
+          "evidence": {
+            "tier": 3,
+            "score": 0.5565,
+            "vectors": {
+              "fresh": 0.5504,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "fresh=0.55<0.9"
+            ],
+            "age_s": 9.3
+          },
+          "utc": "2026-11-08T02:23:32Z"
+        },
+        {
+          "id": "D11f",
+          "expected": "uc09 wait 15s past SLA -> tier 3",
+          "actual": "tier 3 (age 27.0s) ['fresh=0.05<0.9']",
+          "status": "PASS",
+          "evidence": {
+            "fault": null,
+            "tier": 3,
+            "score": 0.0425,
+            "vectors": {
+              "fresh": 0.0472,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "fresh=0.05<0.9"
+            ],
+            "age_s": 27.0
+          },
+          "utc": "2026-11-08T02:23:50Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794104585.038688,
+        "phase_d": [
+          {
+            "id": "D11",
+            "uc": "uc09",
+            "product": "scada_telemetry",
+            "healthy": {
+              "tier": 3,
+              "score": 0.5565,
+              "vectors": {
+                "fresh": 0.5504,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "fresh=0.55<0.9"
+              ],
+              "age_s": 9.3
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0425,
+              "vectors": {
+                "fresh": 0.0472,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "fresh=0.05<0.9"
+              ],
+              "age_s": 27.0
+            },
+            "expected": 3
+          }
+        ],
+        "run_end": 1794104630.3079073
+      }
+    },
+    "gcp_d11_v6_run2": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "D": {
+          "PASS": 1,
+          "FAIL": 1,
+          "SKIP": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "D11h",
+          "expected": "uc09 scada_telemetry healthy tier 1",
+          "actual": "tier 3 (age 8.8s, load took 19.3s) ['fresh=0.59<0.9']",
+          "status": "FAIL",
+          "evidence": {
+            "tier": 3,
+            "score": 0.6007,
+            "vectors": {
+              "fresh": 0.589,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "fresh=0.59<0.9"
+            ],
+            "age_s": 8.8
+          },
+          "utc": "2026-11-08T02:24:30Z"
+        },
+        {
+          "id": "D11f",
+          "expected": "uc09 wait 15s past SLA -> tier 3",
+          "actual": "tier 3 (age 26.3s) ['fresh=0.05<0.9']",
+          "status": "PASS",
+          "evidence": {
+            "fault": null,
+            "tier": 3,
+            "score": 0.0468,
+            "vectors": {
+              "fresh": 0.0519,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "fresh=0.05<0.9"
+            ],
+            "age_s": 26.3
+          },
+          "utc": "2026-11-08T02:24:47Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794104644.9811275,
+        "phase_d": [
+          {
+            "id": "D11",
+            "uc": "uc09",
+            "product": "scada_telemetry",
+            "healthy": {
+              "tier": 3,
+              "score": 0.6007,
+              "vectors": {
+                "fresh": 0.589,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "fresh=0.59<0.9"
+              ],
+              "age_s": 8.8
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0468,
+              "vectors": {
+                "fresh": 0.0519,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "fresh=0.05<0.9"
+              ],
+              "age_s": 26.3
+            },
+            "expected": 3
+          }
+        ],
+        "run_end": 1794104687.7289665
+      }
+    },
+    "gcp_d11_v6_run3": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "D": {
+          "PASS": 1,
+          "FAIL": 1,
+          "SKIP": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "D11h",
+          "expected": "uc09 scada_telemetry healthy tier 1",
+          "actual": "tier 3 (age 9.9s, load took 19.4s) ['fresh=0.51<0.9']",
+          "status": "FAIL",
+          "evidence": {
+            "tier": 3,
+            "score": 0.5086,
+            "vectors": {
+              "fresh": 0.5077,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "fresh=0.51<0.9"
+            ],
+            "age_s": 9.9
+          },
+          "utc": "2026-11-08T02:25:27Z"
+        },
+        {
+          "id": "D11f",
+          "expected": "uc09 wait 15s past SLA -> tier 3",
+          "actual": "tier 3 (age 27.4s) ['fresh=0.04<0.9']",
+          "status": "PASS",
+          "evidence": {
+            "fault": null,
+            "tier": 3,
+            "score": 0.0404,
+            "vectors": {
+              "fresh": 0.045,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [
+              "fresh=0.04<0.9"
+            ],
+            "age_s": 27.4
+          },
+          "utc": "2026-11-08T02:25:44Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794104702.1096053,
+        "phase_d": [
+          {
+            "id": "D11",
+            "uc": "uc09",
+            "product": "scada_telemetry",
+            "healthy": {
+              "tier": 3,
+              "score": 0.5086,
+              "vectors": {
+                "fresh": 0.5077,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "fresh=0.51<0.9"
+              ],
+              "age_s": 9.9
+            },
+            "after": {
+              "tier": 3,
+              "score": 0.0404,
+              "vectors": {
+                "fresh": 0.045,
+                "lin": 1.0,
+                "comp": 1.0,
+                "drift": 1.0,
+                "poison": 1.0,
+                "comp_crit": 1.0
+              },
+              "reasons": [
+                "fresh=0.04<0.9"
+              ],
+              "age_s": 27.4
+            },
+            "expected": 3
+          }
+        ],
+        "run_end": 1794104744.751515
+      }
+    },
+    "gcp_fc_v7_interim": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "F": {
+          "PASS": 4,
+          "FAIL": 0,
+          "SKIP": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "FC1",
+          "expected": "lookup_invoice -> 403 STATE_UNAVAILABLE in < 3 s",
+          "actual": "403 STATE_UNAVAILABLE in 1871 ms",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "2989ac855f1120704d868d01ea2ae115",
+            "ms": 1870.8
+          },
+          "utc": "2026-11-08T02:42:11Z"
+        },
+        {
+          "id": "FC2",
+          "expected": "approve_payment (valid binding) -> 403 STATE_UNAVAILABLE; no call reaches cene-tools",
+          "actual": "403 STATE_UNAVAILABLE in 1087 ms; cene-tools requests in window: 0",
+          "status": "PASS",
+          "evidence": {
+            "invoice": "INV-000358",
+            "http": 403,
+            "decision": "denied",
+            "trace": "615b233291e0458e4d868d01ea2ae98d",
+            "ms": 1087.0,
+            "tools_requests_in_window": 0
+          },
+          "utc": "2026-11-08T02:42:12Z"
+        },
+        {
+          "id": "FC3",
+          "expected": "10 calls in a row all denied; median and max time to deny",
+          "actual": "10/10 denied; median 1081 ms, max 1116 ms",
+          "status": "PASS",
+          "evidence": {
+            "median_ms": 1081.2,
+            "max_ms": 1115.8
+          },
+          "utc": "2026-11-08T02:42:23Z"
+        },
+        {
+          "id": "FC4",
+          "expected": "12 decision events, all denied STATE_UNAVAILABLE",
+          "actual": "12 STATE_UNAVAILABLE, 0 other",
+          "status": "PASS",
+          "evidence": {
+            "audit_prefix": "audit/cene-gateway-failclosed/"
+          },
+          "utc": "2026-11-08T02:43:27Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794105710.317556,
+        "fc3_ms": [
+          1081.0,
+          1081.5,
+          1100.2,
+          1079.9,
+          1072.6,
+          1115.8,
+          1066.5,
+          1082.3,
+          1078.0,
+          1106.0
+        ],
+        "run_end": 1794105807.723487
+      }
+    },
+    "gcp_fc_v7": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "F": {
+          "PASS": 4,
+          "FAIL": 0,
+          "SKIP": 0,
+          "INFO": 1
+        }
+      },
+      "checks": [
+        {
+          "id": "FC1-cold",
+          "expected": "first request to a new revision: time to deny (measured, no pass mark)",
+          "actual": "403 STATE_UNAVAILABLE in 1897 ms",
+          "status": "INFO",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "c5a53c753fe08971267d7d569aa94854",
+            "ms": 1896.7
+          },
+          "utc": "2026-11-08T02:48:28Z"
+        },
+        {
+          "id": "FC1",
+          "expected": "after /health: lookup_invoice -> 403 STATE_UNAVAILABLE in < 3 s",
+          "actual": "/health 200; 403 STATE_UNAVAILABLE in 1080 ms",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "cece0163c777aacc267d7d569aa94023",
+            "ms": 1080.4
+          },
+          "utc": "2026-11-08T02:48:30Z"
+        },
+        {
+          "id": "FC2",
+          "expected": "approve_payment (valid binding) -> 403 STATE_UNAVAILABLE; no call reaches cene-tools",
+          "actual": "403 STATE_UNAVAILABLE in 1085 ms; cene-tools requests in window: 0",
+          "status": "PASS",
+          "evidence": {
+            "invoice": "INV-000358",
+            "http": 403,
+            "decision": "denied",
+            "trace": "b31ca1390336d56f267d7d569aa94caf",
+            "ms": 1085.3,
+            "tools_requests_in_window": 0
+          },
+          "utc": "2026-11-08T02:48:31Z"
+        },
+        {
+          "id": "FC3",
+          "expected": "10 calls in a row all denied; median and max time to deny",
+          "actual": "10/10 denied; median 1080 ms, max 1090 ms",
+          "status": "PASS",
+          "evidence": {
+            "median_ms": 1080.1,
+            "max_ms": 1090.5
+          },
+          "utc": "2026-11-08T02:48:41Z"
+        },
+        {
+          "id": "FC4",
+          "expected": "13 decision events, all denied STATE_UNAVAILABLE",
+          "actual": "13 STATE_UNAVAILABLE, 0 other",
+          "status": "PASS",
+          "evidence": {
+            "audit_prefix": "audit/cene-gateway-failclosed/"
+          },
+          "utc": "2026-11-08T02:49:42Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794106097.6895802,
+        "fc3_ms": [
+          1083.9,
+          1088.2,
+          1090.5,
+          1076.9,
+          1084.4,
+          1078.4,
+          1075.3,
+          1065.1,
+          1068.4,
+          1081.7
+        ],
+        "run_end": 1794106182.733515
+      }
+    },
+    "gcp_f_v7": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "F": {
+          "PASS": 4,
+          "FAIL": 0,
+          "SKIP": 0,
+          "INFO": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "F3",
+          "expected": "cold-start lookup_invoice (gateway + tools from zero)",
+          "actual": "11613 ms, 200",
+          "status": "PASS",
+          "evidence": {
+            "http": 200,
+            "decision": "allowed",
+            "trace": "5d57b732df8723f37afede4b4ea4fea6",
+            "ms": 11612.9
+          },
+          "utc": "2026-11-08T03:11:05Z"
+        },
+        {
+          "id": "F1",
+          "expected": "100 warm lookups: p50/p95/p99 ms",
+          "actual": "{\"n\": 100, \"errors\": 0, \"p50\": 904.2, \"p95\": 982.3, \"p99\": 1740.1, \"mean\": 904.0}",
+          "status": "PASS",
+          "evidence": {},
+          "utc": "2026-11-08T03:12:40Z"
+        },
+        {
+          "id": "F2",
+          "expected": "20 token issues: p50/p95 ms",
+          "actual": "{\"n\": 20, \"p50\": 3246.4, \"p95\": 4138.6, \"mean\": 3362.7}",
+          "status": "PASS",
+          "evidence": {},
+          "utc": "2026-11-08T03:13:47Z"
+        },
+        {
+          "id": "F4",
+          "expected": "BigQuery lookup alone: client and job ms",
+          "actual": "{\"n\": 20, \"client_p50\": 704.8, \"client_p95\": 3007.0, \"job_p50\": 197.0, \"job_p95\": 224.0}",
+          "status": "PASS",
+          "evidence": {},
+          "utc": "2026-11-08T03:14:09Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794107436.761135,
+        "latency": {
+          "F3_cold_ms": 11612.9,
+          "F1": {
+            "n": 100,
+            "errors": 0,
+            "p50": 904.2,
+            "p95": 982.3,
+            "p99": 1740.1,
+            "mean": 904.0
+          },
+          "F2": {
+            "n": 20,
+            "p50": 3246.4,
+            "p95": 4138.6,
+            "mean": 3362.7
+          },
+          "F4": {
+            "n": 20,
+            "client_p50": 704.8,
+            "client_p95": 3007.0,
+            "job_p50": 197.0,
+            "job_p95": 224.0
+          }
+        },
+        "run_end": 1794107649.9258804
+      }
+    },
+    "gcp_b_v7": {
+      "control": "https://<cene-control-url>",
+      "gateway": "https://<cene-gateway-url>",
+      "user": "<tester-google-account>",
+      "summary": {
+        "B": {
+          "PASS": 14,
+          "FAIL": 0,
+          "SKIP": 0,
+          "INFO": 0
+        }
+      },
+      "checks": [
+        {
+          "id": "B1",
+          "expected": "tier 1; fresh >= 0.9",
+          "actual": "tier 1; fresh 1.0; age 9s",
+          "status": "PASS",
+          "evidence": {
+            "vectors": {
+              "fresh": 1.0,
+              "lin": 1.0,
+              "comp": 1.0,
+              "drift": 1.0,
+              "poison": 1.0,
+              "comp_crit": 1.0
+            },
+            "reasons": [],
+            "score": 1.0
+          },
+          "utc": "2026-11-08T03:14:58Z"
+        },
+        {
+          "id": "B2",
+          "expected": "tier 1; lookup/approve direct; token < 4 KB; Merkle bindings",
+          "actual": "tier 1; tools {'lookup_invoice': 'direct', 'approve_payment': 'direct'}; 1658 B; 278 bindings",
+          "status": "PASS",
+          "evidence": {
+            "token": "eyJhbGciOiJFUzI1NiIs...",
+            "jti": "9afa1b6a13e54a8396f1243cb7f7ef1c",
+            "http": 200,
+            "trace": "8bc04b1c62d86e3e1cd66e7b603719f8",
+            "ms": 3354.8
+          },
+          "utc": "2026-11-08T03:15:01Z"
+        },
+        {
+          "id": "B3",
+          "expected": "200; row with JSON types (amount number, nulls null)",
+          "actual": "200; amount float; string-nulls []",
+          "status": "PASS",
+          "evidence": {
+            "row": {
+              "invoice_id": "INV-000001",
+              "vendor_id": "V-004",
+              "account_id": "ACC-1004",
+              "amount": 7008.08,
+              "discount_pct": 1.73,
+              "currency": "AUD",
+              "status": "open",
+              "vendor_notes": "Thanks for your business."
+            },
+            "http": 200,
+            "decision": "allowed",
+            "trace": "0836c1d184965d444e809d2dccf153d6",
+            "ms": 1499.7
+          },
+          "utc": "2026-11-08T03:15:03Z"
+        },
+        {
+          "id": "B4",
+          "expected": "200 allowed",
+          "actual": "200 allowed",
+          "status": "PASS",
+          "evidence": {
+            "invoice": "INV-000019",
+            "http": 200,
+            "decision": "allowed",
+            "trace": "e3e8f79c342c94e6944e73eddf4a0967",
+            "ms": 370.0
+          },
+          "utc": "2026-11-08T03:15:03Z"
+        },
+        {
+          "id": "B5",
+          "expected": "403 TEMPORAL_VIOLATION",
+          "actual": "403 TEMPORAL_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "c7554ca6b4c6e286944e73eddf4a01bf",
+            "ms": 75.3
+          },
+          "utc": "2026-11-08T03:15:03Z"
+        },
+        {
+          "id": "B6",
+          "expected": "403 BINDING_VIOLATION",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "532462d26c114a0b944e73eddf4a0c50",
+            "ms": 80.0
+          },
+          "utc": "2026-11-08T03:15:03Z"
+        },
+        {
+          "id": "B7",
+          "expected": "403 BINDING_VIOLATION",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "903bc3cd3253c4b9944e73eddf4a011f",
+            "ms": 76.3
+          },
+          "utc": "2026-11-08T03:15:03Z"
+        },
+        {
+          "id": "B8",
+          "expected": "403 (BINDING_VIOLATION or ARG_OUT_OF_BOUNDS)",
+          "actual": "403 BINDING_VIOLATION",
+          "status": "PASS",
+          "evidence": {
+            "bound": {
+              "amount": 1808.78
+            },
+            "http": 403,
+            "decision": "denied",
+            "trace": "1cce29a437c1de35944e73eddf4a0d49",
+            "ms": 78.7
+          },
+          "utc": "2026-11-08T03:15:03Z"
+        },
+        {
+          "id": "B9",
+          "expected": "403 TOOL_NOT_ALLOWED",
+          "actual": "403 TOOL_NOT_ALLOWED",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "7a31e5ce92ac999a944e73eddf4a0692",
+            "ms": 70.8
+          },
+          "utc": "2026-11-08T03:15:03Z"
+        },
+        {
+          "id": "B10",
+          "expected": "200 then 403 REPLAY",
+          "actual": "200 then 403 REPLAY",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "ef98451da2da7e9c944e73eddf4a0465",
+            "ms": 82.6
+          },
+          "utc": "2026-11-08T03:15:04Z"
+        },
+        {
+          "id": "B11",
+          "expected": "403 TOKEN_MISSING",
+          "actual": "403 TOKEN_MISSING",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "20085427dbb3b457944e73eddf4a0799",
+            "ms": 67.3
+          },
+          "utc": "2026-11-08T03:15:04Z"
+        },
+        {
+          "id": "B12",
+          "expected": "403 TOKEN_BAD_SIGNATURE",
+          "actual": "403 TOKEN_BAD_SIGNATURE",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "57fb71b6a2c236a3944e73eddf4a0b71",
+            "ms": 68.3
+          },
+          "utc": "2026-11-08T03:15:04Z"
+        },
+        {
+          "id": "B13",
+          "expected": "403 TOKEN_BAD_SIGNATURE",
+          "actual": "403 TOKEN_BAD_SIGNATURE",
+          "status": "PASS",
+          "evidence": {
+            "http": 403,
+            "decision": "denied",
+            "trace": "a75e08a56d79a5b5944e73eddf4a0ef8",
+            "ms": 76.7
+          },
+          "utc": "2026-11-08T03:15:04Z"
+        },
+        {
+          "id": "B14",
+          "expected": "exactly 1 allowed approve_payment in gateway audit",
+          "actual": "1",
+          "status": "PASS",
+          "evidence": {
+            "jti": "9afa1b6a13e54a8396f1243cb7f7ef1c"
+          },
+          "utc": "2026-11-08T03:15:10Z"
+        }
+      ],
+      "extra": {
+        "run_start": 1794107670.0950375,
+        "B_jti": "9afa1b6a13e54a8396f1243cb7f7ef1c",
+        "run_end": 1794107710.8187578
+      }
+    }
+  },
+  "notes": {
+    "gcp_c_v4gw_agent": "gateway temporarily on cene:v4 (control and tools on v5) to measure the two-person execution path; restored to v5 afterwards",
+    "gcp_c3_v5": "2026-11-08: phase C on v5 with three identities (requester cene-agent; approvers user and cene-approver), after the Terraform state moved to gs://<tfstate-bucket> and v5 was adopted"
+  },
+  "followup_20261108": {
+    "terraform_state": "gs://<tfstate-bucket>/cene/default.tfstate (migrated from Cloud Shell, serial 68 -> 69)",
+    "v5_adoption_plan": "0 to add, 3 to change, 0 to destroy; re-plan: no changes",
+    "test_identity_plan": "3 to add (cene-approver SA, run.invoker on cene-gateway, token-creator on cene-approver), 0 to change, 0 to destroy; cene-agent grant imported",
+    "denied_call_latency_ms_B5_B13_v5": {
+      "B5": 72.1,
+      "B6": 65.3,
+      "B7": 96.5,
+      "B8": 72.6,
+      "B9": 70.9,
+      "B10": 85.2,
+      "B11": 70.6,
+      "B12": 75.0,
+      "B13": 71.3
+    }
+  },
+  "followup_20261108b": {
+    "branch": "gcp-test-20261108b",
+    "image": "cene:v6",
+    "failclosed_service": "cene-gateway-failclosed (temporary, v6, CENE_REDIS_URL=redis://10.255.255.1:6379, max 1 instance; deleted after the checks)",
+    "fc1_followup_warm_single_calls_ms": [
+      1672,
+      1632,
+      1668
+    ],
+    "fc1_first_request_server_latency_s": 3.342,
+    "v6_plan": "0 to add, 3 to change (image v5 -> v6 on control, gateway, tools), 0 to destroy; re-plan No changes here and in Cloud Shell"
+  },
+  "followup_20261108c": {
+    "image": "cene:v7",
+    "digest": "sha256:8b6b79108da1b950c6eb23a02f44a32a30826ca46a8017dd90f93d79236e8634",
+    "interim_v7_digest": "sha256:e0854b6e27074968a2d6aedc602fba2ee0e9415315734c1b13bba34e24a8c022",
+    "v7_plan": "0 to add, 3 to change (image v6 -> v7 only), 0 to destroy; re-plan No changes here and in Cloud Shell",
+    "failclosed_revision": "cene-gateway-failclosed-00002-6kj (deleted)",
+    "startup_setup_seconds": 2.13,
+    "uc09": "accepted: needs streaming ingestion, out of scope for the prototype"
+  }
+}

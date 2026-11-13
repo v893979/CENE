@@ -1,0 +1,58 @@
+product: orders
+owner: retail-data
+key_column: order_id
+freshness:
+  sla_seconds: 3600
+lineage:
+  upstreams:
+  - carrier_scans
+columns:
+  order_id:
+    type: string
+    criticality: 3
+    pattern: ^O-\d{6}$
+  delivery_address_id:
+    type: string
+    criticality: 3
+    pattern: ^A-\d{3}$
+  order_value:
+    type: number
+    criticality: 3
+    min: 1
+    max: 500
+  depot_scan_ts:
+    type: string
+    criticality: 1
+tools:
+  write:
+    issue_refund:
+      args:
+        order_id: ^O-\d{6}$
+        delivery_address_id: ^A-\d{3}$
+        amount:
+          type: number
+          min: 0.01
+      limits:
+        amount_max: 500
+      bind:
+        keys:
+        - order_id
+        - delivery_address_id
+        max:
+          amount: order_value
+        require_not_null:
+        - depot_scan_ts
+temporal:
+- name: one_refund_per_order
+  tool: issue_refund
+  type: once_per
+  by:
+  - order_id
+  window_seconds: 7776000
+- name: refunds_per_address_30d
+  tool: issue_refund
+  type: count_within
+  by:
+  - delivery_address_id
+  window_seconds: 2592000
+  max: 3
